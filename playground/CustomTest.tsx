@@ -43,8 +43,8 @@ const CustomTest = ({
           placeholder="Input Mermaid Syntax"
         />
         <br />
-        <button type="submit" id="render-excalidraw-btn">
-          {"Render to Excalidraw"}
+        <button type="submit" id="render-drawnix-btn">
+          {"Render to Drawnix"}
         </button>
       </form>
 

@@ -75,7 +75,7 @@ const computeGroupIds = (
   };
 };
 
-export const FlowchartToExcalidrawSkeletonConverter = new GraphConverter({
+export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
   converter: (graph: Flowchart, options) => {
     const elements: ExcalidrawElementSkeleton[] = [];
     const fontSize = options.fontSize;

@@ -20,7 +20,7 @@ export default defineConfig({
       clientFiles: [
         "./testcases/**/*",
         "../src/parser/**/*",
-        "../src/graphToExcalidraw.ts",
+        "../src/graphToDrawnix.ts",
         "./initExcalidraw.ts",
       ],
     },

@@ -24,7 +24,7 @@ const SingleTestCase = ({ testcase, onChange, index }: SingleTestCaseProps) => {
           onChange(index);
         }}
       >
-        {"Render to Excalidraw"}
+        {"Render to Drawnix"}
       </button>
 
       <MermaidDiagram

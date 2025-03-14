@@ -10,7 +10,7 @@ import { GraphConverter } from "../GraphConverter.js";
 import type { ExcalidrawElementSkeleton } from "@excalidraw/excalidraw/types/data/transform.js";
 import type { Class } from "../../parser/class.js";
 
-export const classToExcalidrawSkeletonConvertor = new GraphConverter({
+export const classToDrawnixSkeletonConvertor = new GraphConverter({
   converter: (chart: Class) => {
     const elements: ExcalidrawElementSkeleton[] = [];
 

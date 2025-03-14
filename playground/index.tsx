@@ -1,6 +1,6 @@
 import { useState, useCallback, useDeferredValue } from "react";
 import CustomTest from "./CustomTest.tsx";
-import ExcalidrawWrapper from "./ExcalidrawWrapper.tsx";
+import DrawnixWrapper from "./DrawnixWrapper.tsx"
 import Testcases from "./Testcases.tsx";
 import { parseMermaid } from "../src/parseMermaid.ts";
 import GitHubCorner from "./GitHubCorner.tsx";
@@ -92,8 +92,8 @@ const App = () => {
         onChange={handleOnChange}
       />
 
-      <div id="excalidraw">
-        <ExcalidrawWrapper
+      <div id="drawnix">
+        <DrawnixWrapper
           mermaidDefinition={deferredMermaidData.definition}
           mermaidOutput={deferredMermaidData.output}
         />

@@ -4,50 +4,50 @@ import {
   convertToExcalidrawElements,
 } from "@excalidraw/excalidraw";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types.js";
-import { graphToExcalidraw } from "../src/graphToExcalidraw";
+import { graphToDrawnix } from "../src/graphToDrawnix";
 import { DEFAULT_FONT_SIZE } from "../src/constants";
 import type { MermaidData } from "./";
 
-interface ExcalidrawWrapperProps {
+interface DrawnixWrapperProps {
   mermaidDefinition: MermaidData["definition"];
   mermaidOutput: MermaidData["output"];
 }
 
-const ExcalidrawWrapper = ({
+const DrawnixWrapper = ({
   mermaidDefinition,
   mermaidOutput,
-}: ExcalidrawWrapperProps) => {
-  const [excalidrawAPI, setExcalidrawAPI] =
+}: DrawnixWrapperProps) => {
+  const [drawnixAPI, setDrawnixAPI] =
     useState<ExcalidrawImperativeAPI | null>(null);
 
   useEffect(() => {
-    if (!excalidrawAPI) {
+    if (!drawnixAPI) {
       return;
     }
 
     if (mermaidDefinition === "" || mermaidOutput === null) {
-      excalidrawAPI.resetScene();
+      drawnixAPI.resetScene();
       return;
     }
 
-    const { elements, files } = graphToExcalidraw(mermaidOutput, {
+    const { elements, files } = graphToDrawnix(mermaidOutput, {
       fontSize: DEFAULT_FONT_SIZE,
     });
 
-    excalidrawAPI.updateScene({
+    drawnixAPI.updateScene({
       elements: convertToExcalidrawElements(elements),
     });
-    excalidrawAPI.scrollToContent(excalidrawAPI.getSceneElements(), {
+    drawnixAPI.scrollToContent(drawnixAPI.getSceneElements(), {
       fitToContent: true,
     });
 
     if (files) {
-      excalidrawAPI.addFiles(Object.values(files));
+      drawnixAPI.addFiles(Object.values(files));
     }
   }, [mermaidDefinition, mermaidOutput]);
 
   return (
-    <div className="excalidraw-wrapper">
+    <div className="drawnix-wrapper">
       <Excalidraw
         initialData={{
           appState: {
@@ -55,10 +55,10 @@ const ExcalidrawWrapper = ({
             currentItemFontFamily: 1,
           },
         }}
-        excalidrawAPI={(api) => setExcalidrawAPI(api)}
+        excalidrawAPI={(api) => setDrawnixAPI(api)}
       />
     </div>
   );
 };
 
-export default ExcalidrawWrapper;
+export default DrawnixWrapper;

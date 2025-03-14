@@ -12,7 +12,7 @@ import {
 
 import type { ExcalidrawElement } from "../../types.js";
 
-export const SequenceToExcalidrawSkeletonConvertor = new GraphConverter({
+export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
   converter: (chart: Sequence) => {
     const elements: ExcalidrawElementSkeleton[] = [];
     const activations: ExcalidrawElementSkeleton[] = [];

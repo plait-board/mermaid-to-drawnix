@@ -1,6 +1,11 @@
 import { ExcalidrawElementSkeleton } from "@excalidraw/excalidraw/types/data/transform.js";
 import { BinaryFiles } from "@excalidraw/excalidraw/types/types.js";
 
+export interface MermaidToDrawnixResult {
+  elements: ExcalidrawElementSkeleton[];
+  files?: BinaryFiles;
+}
+
 export enum VERTEX_TYPE {
   ROUND = "round",
   STADIUM = "stadium",
@@ -55,7 +60,7 @@ export interface GraphImage {
   height: number;
 }
 
-export interface MermaidToExcalidrawResult {
+export interface MermaidToDrawnixResult {
   elements: ExcalidrawElementSkeleton[];
   files?: BinaryFiles;
 }

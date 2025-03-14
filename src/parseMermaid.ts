@@ -53,7 +53,7 @@ export const parseMermaid = async (
   );
 
   // Render the SVG diagram
-  const { svg } = await mermaid.render("mermaid-to-excalidraw", definition);
+  const { svg } = await mermaid.render("mermaid-to-drawnix", definition);
 
   // Append Svg to DOM
   const svgContainer = document.createElement("div");
