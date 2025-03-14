@@ -38,6 +38,8 @@
     "slate": "^0.101.5",
     "slate-history": "^0.100.0",
     "slate-react": "^0.105.0",
+    "points-on-curve": "^1.0.0",
+    "rxjs": "~7.8.0",
     "@drawnix/drawnix": "0.0.3",
     "@drawnix/react-board": "0.0.3",
     "@drawnix/react-text": "0.0.3",

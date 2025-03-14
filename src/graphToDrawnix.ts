@@ -14,7 +14,7 @@ export const graphToDrawnix = (
     }
 
     case "flowchart": {
-      return FlowchartToDrawnixSkeletonConverter.convert(graph, options);
+      return FlowchartToDrawnixSkeletonConverter.convert(graph as Flowchart, options);
     }
 
     // case "sequence": {

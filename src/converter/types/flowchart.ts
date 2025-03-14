@@ -6,9 +6,17 @@ import {
   computeExcalidrawVertexStyle,
   computeExcalidrawVertexLabelStyle,
   computeExcalidrawArrowType,
+  getRectangleByVertex,
 } from "../helpers.js";
 import { VERTEX_TYPE } from "../../interfaces.js";
 import { Flowchart } from "../../parser/flowchart.js";
+import {
+  createGeometryElement,
+  GeometryShapes,
+  BasicShapes,
+} from "@plait/draw";
+import { PlaitElement, RectangleClient } from "@plait/core";
+import { buildText } from "@plait/common";
 
 const computeGroupIds = (
   graph: Flowchart
@@ -77,31 +85,29 @@ const computeGroupIds = (
 
 export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
   converter: (graph: Flowchart, options) => {
-    const elements: ExcalidrawElementSkeleton[] = [];
+    const elements: PlaitElement[] = [];
     const fontSize = options.fontSize;
-    const { getGroupIds, getParentId } = computeGroupIds(graph);
-
+    // const { getGroupIds, getParentId } = computeGroupIds(graph);
+    console.log(graph);
     // SubGraphs
     graph.subGraphs.reverse().forEach((subGraph) => {
-      const groupIds = getGroupIds(subGraph.id);
+      // const groupIds = getGroupIds(subGraph.id);
 
-      const containerElement: ExcalidrawElementSkeleton = {
-        id: subGraph.id,
-        type: "rectangle",
-        groupIds,
-        x: subGraph.x,
-        y: subGraph.y,
-        width: subGraph.width,
-        height: subGraph.height,
-        label: {
-          groupIds,
-          text: getText(subGraph),
-          fontSize,
-          verticalAlign: "top",
-        },
-      };
+      // const containerElement: ExcalidrawElementSkeleton = {
+      //   id: subGraph.id,
+      //   type: "rectangle",
+      //   x: subGraph.x,
+      //   y: subGraph.y,
+      //   width: subGraph.width,
+      //   height: subGraph.height,
+      //   label: {
+      //     text: getText(subGraph),
+      //     fontSize,
+      //     verticalAlign: "top",
+      //   },
+      // };
 
-      elements.push(containerElement);
+      // elements.push(containerElement);
     });
 
     // Vertices
@@ -109,7 +115,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       if (!vertex) {
         return;
       }
-      const groupIds = getGroupIds(vertex.id);
+      // const groupIds = getGroupIds(vertex.id);
 
       // Compute custom style
       const containerStyle = computeExcalidrawVertexStyle(
@@ -117,79 +123,70 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       );
       const labelStyle = computeExcalidrawVertexLabelStyle(vertex.labelStyle);
 
-      let containerElement: ExcalidrawElementSkeleton = {
-        id: vertex.id,
-        type: "rectangle",
-        groupIds,
-        x: vertex.x,
-        y: vertex.y,
-        width: vertex.width,
-        height: vertex.height,
-        strokeWidth: 2,
-        label: {
-          groupIds,
-          text: getText(vertex),
-          fontSize,
-          ...labelStyle,
-        },
-        link: vertex.link || null,
-        ...containerStyle,
-      };
+      ;
+
+      let geometryElement = createGeometryElement(BasicShapes.rectangle, RectangleClient.getPoints(getRectangleByVertex(vertex)), buildText(getText(vertex)));
+
+      // let containerElement: ExcalidrawElementSkeleton = {
+      //   id: vertex.id,
+      //   type: "rectangle",
+      //   // groupIds,
+      //   x: vertex.x,
+      //   y: vertex.y,
+      //   width: vertex.width,
+      //   height: vertex.height,
+      //   strokeWidth: 2,
+      //   label: {
+      //     // groupIds,
+      //     text: getText(vertex),
+      //     fontSize,
+      //     ...labelStyle,
+      //   },
+      //   link: vertex.link || null,
+      //   ...containerStyle,
+      // };
 
       switch (vertex.type) {
-        case VERTEX_TYPE.STADIUM: {
-          containerElement = { ...containerElement, roundness: { type: 3 } };
-          break;
-        }
-        case VERTEX_TYPE.ROUND: {
-          containerElement = { ...containerElement, roundness: { type: 3 } };
-          break;
-        }
+        // case VERTEX_TYPE.STADIUM: {
+        //   containerElement = { ...containerElement, roundness: { type: 3 } };
+        //   break;
+        // }
+        // case VERTEX_TYPE.ROUND: {
+        //   containerElement = { ...containerElement, roundness: { type: 3 } };
+        //   break;
+        // }
         case VERTEX_TYPE.DOUBLECIRCLE: {
           const CIRCLE_MARGIN = 5;
           // Create new groupId for double circle
-          groupIds.push(`doublecircle_${vertex.id}}`);
+          // groupIds.push(`doublecircle_${vertex.id}}`);
           // Create inner circle element
-          const innerCircle: ExcalidrawElementSkeleton = {
-            type: "ellipse",
-            groupIds,
-            x: vertex.x + CIRCLE_MARGIN,
-            y: vertex.y + CIRCLE_MARGIN,
-            width: vertex.width - CIRCLE_MARGIN * 2,
-            height: vertex.height - CIRCLE_MARGIN * 2,
-            strokeWidth: 2,
-            roundness: { type: 3 },
-            label: {
-              groupIds,
-              text: getText(vertex),
-              fontSize,
-            },
-          };
-          containerElement = { ...containerElement, groupIds, type: "ellipse" };
+          const innerRectangle = RectangleClient.inflate(getRectangleByVertex(vertex), CIRCLE_MARGIN)
+          const innerCircle = createGeometryElement(BasicShapes.rectangle, RectangleClient.getPoints(innerRectangle), buildText(getText(vertex)));
+          geometryElement = { ...geometryElement, shape: BasicShapes.ellipse };
           elements.push(innerCircle);
           break;
         }
         case VERTEX_TYPE.CIRCLE: {
-          containerElement.type = "ellipse";
+          geometryElement.shape = BasicShapes.ellipse;
           break;
         }
         case VERTEX_TYPE.DIAMOND: {
-          containerElement.type = "diamond";
+          geometryElement.shape = BasicShapes.diamond;
           break;
         }
       }
 
-      elements.push(containerElement);
+      elements.push(geometryElement);
     });
 
     // Edges
     graph.edges.forEach((edge) => {
       let groupIds: string[] = [];
-      const startParentId = getParentId(edge.start);
-      const endParentId = getParentId(edge.end);
-      if (startParentId && startParentId === endParentId) {
-        groupIds = getGroupIds(startParentId);
-      }
+      // const startParentId = getParentId(edge.start);
+      // const endParentId = getParentId(edge.end);
+      // if (startParentId && startParentId === endParentId) {
+      //   groupIds = getGroupIds(startParentId);
+      // }
 
       // Get arrow position data
       const { startX, startY, reflectionPoints } = edge;
@@ -238,7 +235,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
         id: endVertex.id || "",
       };
 
-      elements.push(containerElement);
+      // elements.push(containerElement);
     });
 
     return {

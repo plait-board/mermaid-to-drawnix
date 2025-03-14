@@ -12,6 +12,7 @@ import { ExcalidrawVertexElement } from "../types.js";
 import { Mutable } from "@excalidraw/excalidraw/types/utility-types.js";
 import { removeMarkdown } from "@excalidraw/markdown-to-text";
 import { Edge } from "../parser/flowchart.js";
+import { RectangleClient } from "@plait/core";
 
 /**
  * Compute groupIds for each element
@@ -122,3 +123,7 @@ export const computeExcalidrawVertexLabelStyle = (
   });
   return excalidrawProperty;
 };
+
+export const getRectangleByVertex = (vertex: Vertex) => {
+  return vertex as RectangleClient;
+}

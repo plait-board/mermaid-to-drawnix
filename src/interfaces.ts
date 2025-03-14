@@ -1,8 +1,9 @@
 import { ExcalidrawElementSkeleton } from "@excalidraw/excalidraw/types/data/transform.js";
 import { BinaryFiles } from "@excalidraw/excalidraw/types/types.js";
+import { PlaitElement } from "@plait/core";
 
 export interface MermaidToDrawnixResult {
-  elements: ExcalidrawElementSkeleton[];
+  elements: PlaitElement[];
   files?: BinaryFiles;
 }
 

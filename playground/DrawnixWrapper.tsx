@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Excalidraw,
   convertToExcalidrawElements,
@@ -11,9 +11,9 @@ import { graphToDrawnix } from "../src/graphToDrawnix";
 import { DEFAULT_FONT_SIZE } from "../src/constants";
 import type { MermaidData } from "./";
 
-import './../node_modules/@drawnix/drawnix/style.css';
-import './../node_modules/@drawnix/react-board/style.css';
-import './../node_modules/@drawnix/react-text/style.css';
+import "./../node_modules/@drawnix/drawnix/style.css";
+import "./../node_modules/@drawnix/react-board/style.css";
+import "./../node_modules/@drawnix/react-text/style.css";
 
 interface DrawnixWrapperProps {
   mermaidDefinition: MermaidData["definition"];
@@ -24,43 +24,33 @@ const DrawnixWrapper = ({
   mermaidDefinition,
   mermaidOutput,
 }: DrawnixWrapperProps) => {
-  const [drawnixAPI, setDrawnixAPI] = useState<ExcalidrawImperativeAPI | null>(
-    null
-  );
+  const boardRef = useRef<PlaitBoard | null>(null);
+  const [elements, setElements] = useState<PlaitElement[]>([]);
 
   useEffect(() => {
-    if (!drawnixAPI) {
-      return;
-    }
+    console.log(mermaidOutput, mermaidDefinition);
 
     if (mermaidDefinition === "" || mermaidOutput === null) {
-      drawnixAPI.resetScene();
+      setElements([]);
       return;
     }
 
-    const { elements, files } = graphToDrawnix(mermaidOutput, {
+    const { elements: newElements, files } = graphToDrawnix(mermaidOutput, {
       fontSize: DEFAULT_FONT_SIZE,
     });
 
-    drawnixAPI.updateScene({
-      elements: convertToExcalidrawElements(elements),
-    });
-    drawnixAPI.scrollToContent(drawnixAPI.getSceneElements(), {
-      fitToContent: true,
-    });
-
-    if (files) {
-      drawnixAPI.addFiles(Object.values(files));
-    }
+    setElements(newElements);
+    console.log(newElements);
   }, [mermaidDefinition, mermaidOutput]);
 
   return (
     <div className="drawnix-wrapper">
       <Drawnix
-        value={[]}
-        onChange={(value) => {
+        value={elements}
+        onChange={(value) => {}}
+        afterInit={(board: PlaitBoard) => {
+          boardRef.current = board;
         }}
-        afterInit={(board: PlaitBoard) => {}}
       ></Drawnix>
     </div>
   );

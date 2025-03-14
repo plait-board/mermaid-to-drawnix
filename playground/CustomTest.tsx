@@ -41,6 +41,8 @@ const CustomTest = ({
           }}
           style={{ marginTop: "1rem" }}
           placeholder="Input Mermaid Syntax"
+          value={`flowchart TD
+Start --> Stop`}
         />
         <br />
         <button type="submit" id="render-drawnix-btn">
