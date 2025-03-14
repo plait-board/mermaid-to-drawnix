@@ -49,7 +49,45 @@ export const transformToExcalidrawTextSkeleton = (element: Text) => {
   return textElement;
 };
 
-export const transformToExcalidrawContainerSkeleton = (
+export const transformToDrawnixContainerSkeleton = (
+  element: Exclude<Node, Line | Arrow | Text>
+) => {
+  let extraProps = {};
+  if (element.type === "rectangle" && element.subtype === "activation") {
+    extraProps = {
+      backgroundColor: "#e9ecef",
+      fillStyle: "solid",
+    };
+  }
+  const container: ExcalidrawElementSkeleton = {
+    id: element.id,
+    type: element.type,
+    x: element.x,
+    y: element.y,
+    width: element.width,
+    height: element.height,
+    label: {
+      text: normalizeText(element?.label?.text || ""),
+      fontSize: element?.label?.fontSize,
+      verticalAlign: element.label?.verticalAlign || "middle",
+      strokeColor: element.label?.color || "#000",
+      groupIds: element.groupId ? [element.groupId] : [],
+    },
+    strokeStyle: element?.strokeStyle,
+    strokeWidth: element?.strokeWidth,
+    strokeColor: element?.strokeColor,
+    backgroundColor: element?.bgColor,
+    fillStyle: "solid",
+    ...extraProps,
+  };
+  if (element.groupId) {
+    Object.assign(container, { groupIds: [element.groupId] });
+  }
+
+  return container;
+};
+
+export const transformToDrawnixBasicSkeleton = (
   element: Exclude<Node, Line | Arrow | Text>
 ) => {
   let extraProps = {};
