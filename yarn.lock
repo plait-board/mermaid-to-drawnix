@@ -958,20 +958,20 @@
   resolved "https://registry.npmjs.org/@braintree/sanitize-url/-/sanitize-url-6.0.2.tgz"
   integrity sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==
 
-"@drawnix/drawnix@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@drawnix/drawnix/-/drawnix-0.0.1.tgz#7fd95c36ca5a9ce6f2c13df7d632cfacc9d5b83a"
-  integrity sha512-JT+s0qXOSQiNZsngWGS1h2LiD2F6mUL7NUXL/Z+rcOpIqecJwH82yPJIsveXh8PE8hgqPhb1ZDsAo2Zu9SNhrA==
+"@drawnix/drawnix@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@drawnix/drawnix/-/drawnix-0.0.3.tgz#e6d3aa08d09ca1cbfc2bc17208347f058c26d13c"
+  integrity sha512-kvTZF7/dZ3qlCDoYGjoj0OPdzosVmuEkTBwkgPUwZ6dHYx4nYCUSSA8Kw4vZSNMUARiRxdurP1LH/X77IqAsXg==
 
-"@drawnix/react-board@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@drawnix/react-board/-/react-board-0.0.1.tgz#0c3cd05712535b8b2f629b75d81be0d8d5ca80cd"
-  integrity sha512-eLtIHbhQEejvjATMaMA2YvAs6rbEl2VfLk85Ki7eIMIsD0uZIYIGMViyQ7PnuA86mRhsZ2pF6OCMlLW3qMkNHw==
+"@drawnix/react-board@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@drawnix/react-board/-/react-board-0.0.3.tgz#69b87b60d8c11ffd50f43c241e6fb5bcf9687348"
+  integrity sha512-bstC0CN51yPQu4rLbo5dIWfh3QSz7IozQMxLKTyQPGBPtCZRjb3R0qtJoqSIuycPEB5oeo/JaTqOeRgqpWuYig==
 
-"@drawnix/react-text@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@drawnix/react-text/-/react-text-0.0.1.tgz#8ae0610197b9e9169151d70cf34b38122fc5cac3"
-  integrity sha512-OMURWzSO7N0a4hbiFj4P0KPOU/Z74N8Ci+OSIfmWF7Zgs9hqhQXFl4/2pXlRB9UpCEvahOuo42f0CXhgzLSnrQ==
+"@drawnix/react-text@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@drawnix/react-text/-/react-text-0.0.3.tgz#36bf592e6145950b0ca09d2dc11900f87d9c929c"
+  integrity sha512-dUL606T2xizeRV5HMHzZpSPTzRqXAcBHK2+DrXKu2Gmou0NPgz/AxrlMAiLUBDX7+qZ4WJBImF+5NBoLq5RXUA==
 
 "@esbuild/aix-ppc64@0.20.2":
   version "0.20.2"

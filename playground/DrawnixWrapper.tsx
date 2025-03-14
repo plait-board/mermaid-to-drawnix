@@ -3,10 +3,17 @@ import {
   Excalidraw,
   convertToExcalidrawElements,
 } from "@excalidraw/excalidraw";
+import { Drawnix } from "@drawnix/drawnix";
+import { BoardChangeData } from "@drawnix/react-board";
+import { PlaitBoard, PlaitElement, PlaitTheme, Viewport } from "@plait/core";
 import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types.js";
 import { graphToDrawnix } from "../src/graphToDrawnix";
 import { DEFAULT_FONT_SIZE } from "../src/constants";
 import type { MermaidData } from "./";
+
+import './../node_modules/@drawnix/drawnix/style.css';
+import './../node_modules/@drawnix/react-board/style.css';
+import './../node_modules/@drawnix/react-text/style.css';
 
 interface DrawnixWrapperProps {
   mermaidDefinition: MermaidData["definition"];
@@ -17,8 +24,9 @@ const DrawnixWrapper = ({
   mermaidDefinition,
   mermaidOutput,
 }: DrawnixWrapperProps) => {
-  const [drawnixAPI, setDrawnixAPI] =
-    useState<ExcalidrawImperativeAPI | null>(null);
+  const [drawnixAPI, setDrawnixAPI] = useState<ExcalidrawImperativeAPI | null>(
+    null
+  );
 
   useEffect(() => {
     if (!drawnixAPI) {
@@ -48,15 +56,12 @@ const DrawnixWrapper = ({
 
   return (
     <div className="drawnix-wrapper">
-      <Excalidraw
-        initialData={{
-          appState: {
-            viewBackgroundColor: "#fafafa",
-            currentItemFontFamily: 1,
-          },
+      <Drawnix
+        value={[]}
+        onChange={(value) => {
         }}
-        excalidrawAPI={(api) => setDrawnixAPI(api)}
-      />
+        afterInit={(board: PlaitBoard) => {}}
+      ></Drawnix>
     </div>
   );
 };
