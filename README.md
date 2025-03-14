@@ -89,12 +89,9 @@ try {
 
 ## Playground
 
-Try out [here](https://mermaid-to-drawnix.vercel.app).
+Try out [here](https://mermaid-to-drawnix.pages.dev).
 
-## API
+## Thanks 
 
-Head over to the [docs](https://docs.drawnix.com/docs/@drawnix/mermaid-to-drawnix/api).
+Inspired by [mermaid-to-excalidraw](https://github.com/excalidraw/mermaid-to-excalidraw)
 
-## Support new Diagram type
-
-Head over to the [docs](https://docs.drawnix.com/docs/@drawnix/mermaid-to-drawnix/codebase/new-diagram-type).
