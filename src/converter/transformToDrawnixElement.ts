@@ -19,7 +19,6 @@ import {
 } from "@plait/draw";
 import { DrawnixConfig } from "../index.js";
 import { Point, RectangleClient } from "@plait/core";
-import { isValidColor } from "@drawnix/drawnix";
 
 export const transformToDrawnixLineElement = (
   element: Line,
@@ -69,7 +68,7 @@ export const transformToDrawnixArrowElement = (
   const arrowOptions: Partial<PlaitArrowLine> = {
     strokeColor:
       (element.strokeColor &&
-        isValidColor(element.strokeColor) &&
+        element.strokeColor !== "none" &&
         element.strokeColor) ||
       "#000",
     strokeWidth: element.strokeWidth || 1,
