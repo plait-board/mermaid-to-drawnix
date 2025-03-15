@@ -216,7 +216,10 @@ export const transformToDrawnixTextElement = (
     fontFamily: DEFAULT_FONT_FAMILY,
     fontSize: config.fontSize,
   });
-  const rectangle = getRectangleByMermaidElement(element);
+  const rectangle = getRectangleByMermaidElement({
+    ...element,
+    width: element.width! + ShapeDefaultSpace.rectangleAndText * 2,
+  });
   const textElement = createGeometryElement(
     BasicShapes.text,
     RectangleClient.getPoints(rectangle),
