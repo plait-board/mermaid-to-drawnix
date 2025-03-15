@@ -19,7 +19,7 @@ interface TestcasesProps {
 const Testcases = ({ onChange }: TestcasesProps) => {
   const testcaseTypes: { name: string; testcases: TestCase[] }[] = [
     { name: "Flowchart", testcases: FLOWCHART_DIAGRAM_TESTCASES },
-    // { name: "Sequence", testcases: SEQUENCE_DIAGRAM_TESTCASES },
+    { name: "Sequence", testcases: SEQUENCE_DIAGRAM_TESTCASES },
     // { name: "Class", testcases: CLASS_DIAGRAM_TESTCASES },
     // { name: "Unsupported", testcases: UNSUPPORTED_DIAGRAM_TESTCASES },
   ];

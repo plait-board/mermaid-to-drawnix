@@ -15,6 +15,7 @@ import { Edge } from "../parser/flowchart.js";
 import { RectangleClient } from "@plait/core";
 import { ArrowLineHandle, ArrowLineMarkerType, PlaitArrowLine, PlaitCommonGeometry } from "@plait/draw";
 import { CustomText, StrokeStyle } from "@plait/common";
+import { Container, Text } from "../elementSkeleton.js";
 
 /**
  * Compute groupIds for each element
@@ -151,6 +152,10 @@ export const computeDrawnixTextStyle = (
   return textProperty;
 };
 
-export const getRectangleByMermaidElement = (vertex: Vertex | SubGraph) => {
+export const getRectangleByMermaidElement = (vertex: Vertex | SubGraph | Container | Text) => {
   return vertex as RectangleClient;
+};
+
+export const normalizeText = (text: string) => {
+  return text.replace(/\\n/g, "\n");
 };
