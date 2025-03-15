@@ -13,6 +13,8 @@ import { Mutable } from "@excalidraw/excalidraw/types/utility-types.js";
 import { removeMarkdown } from "@excalidraw/markdown-to-text";
 import { Edge } from "../parser/flowchart.js";
 import { RectangleClient } from "@plait/core";
+import { ArrowLineHandle, ArrowLineMarkerType, PlaitArrowLine, PlaitCommonGeometry } from "@plait/draw";
+import { CustomText, StrokeStyle } from "@plait/common";
 
 /**
  * Compute groupIds for each element
@@ -24,35 +26,54 @@ export interface ArrowType {
 /**
  * Convert mermaid edge type to Excalidraw arrow type
  */
-const MERMAID_EDGE_TYPE_MAPPER: { [key: string]: ArrowType } = {
+const MERMAID_EDGE_TYPE_MAPPER: {
+  [key: string]: { source: ArrowLineHandle; target: ArrowLineHandle };
+} = {
+  arrow_point: {
+    source: { marker: ArrowLineMarkerType.none },
+    target: { marker: ArrowLineMarkerType.arrow },
+  },
   arrow_circle: {
-    endArrowhead: "dot",
+    source: { marker: ArrowLineMarkerType.none },
+    target: { marker: ArrowLineMarkerType.arrow },
   },
   arrow_cross: {
-    endArrowhead: "bar",
+    source: { marker: ArrowLineMarkerType.none },
+    target: { marker: ArrowLineMarkerType.arrow },
   },
   arrow_open: {
-    endArrowhead: null,
-    startArrowhead: null,
+    source: { marker: ArrowLineMarkerType.none },
+    target: { marker: ArrowLineMarkerType.none },
   },
   double_arrow_circle: {
-    endArrowhead: "dot",
-    startArrowhead: "dot",
+    source: { marker: ArrowLineMarkerType.arrow },
+    target: { marker: ArrowLineMarkerType.arrow },
   },
   double_arrow_cross: {
-    endArrowhead: "bar",
-    startArrowhead: "bar",
+    source: { marker: ArrowLineMarkerType.arrow },
+    target: { marker: ArrowLineMarkerType.arrow },
   },
   double_arrow_point: {
-    endArrowhead: "arrow",
-    startArrowhead: "arrow",
+    source: { marker: ArrowLineMarkerType.arrow },
+    target: { marker: ArrowLineMarkerType.arrow },
   },
 };
 
-export const computeExcalidrawArrowType = (
+export const computeDrawnixArrowType = (
   mermaidArrowType: string
-): ArrowType => {
+): { source: ArrowLineHandle; target: ArrowLineHandle } => {
   return MERMAID_EDGE_TYPE_MAPPER[mermaidArrowType];
+};
+
+
+export const computeDrawnixArrowStyle = (
+  edge: Edge
+): Partial<Mutable<PlaitArrowLine>> => {
+  const arrowStyle: Partial<Mutable<PlaitArrowLine>> = {};
+  if (edge.stroke === 'dotted') {
+    arrowStyle.strokeStyle = StrokeStyle.dotted;
+  }
+  return arrowStyle;
 };
 
 // Get text from graph elements, fallback markdown to text
@@ -61,6 +82,13 @@ export const getText = (element: Vertex | Edge | SubGraph): string => {
   if (element.labelType === "markdown") {
     text = removeMarkdown(element.text);
   }
+
+  if (text.includes('<br>')) {
+    text = text.replaceAll('<br>', '\n')
+  }
+
+  text = text.replace('<sub>', '');
+  text = text.replace('</sub>', '');
 
   return removeFontAwesomeIcons(text);
 };
@@ -76,54 +104,53 @@ const removeFontAwesomeIcons = (input: string): string => {
 /**
  * Compute style for vertex
  */
-export const computeExcalidrawVertexStyle = (
+export const computeDrawnixVertexStyle = (
   style: Vertex["containerStyle"]
-): Partial<Mutable<ExcalidrawVertexElement>> => {
-  const excalidrawProperty: Partial<Mutable<ExcalidrawVertexElement>> = {};
+): Partial<Mutable<PlaitCommonGeometry>> => {
+  const plaitElementProperty: Partial<Mutable<PlaitCommonGeometry>> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case CONTAINER_STYLE_PROPERTY.FILL: {
-        excalidrawProperty.backgroundColor = style[property];
-        excalidrawProperty.fillStyle = "solid";
+        plaitElementProperty.fill = style[property];
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE: {
-        excalidrawProperty.strokeColor = style[property];
+        plaitElementProperty.strokeColor = style[property];
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_WIDTH: {
-        excalidrawProperty.strokeWidth = Number(
+        plaitElementProperty.strokeWidth = Number(
           style[property]?.split("px")[0]
         );
         break;
       }
       case CONTAINER_STYLE_PROPERTY.STROKE_DASHARRAY: {
-        excalidrawProperty.strokeStyle = "dashed";
+        plaitElementProperty.strokeStyle = StrokeStyle.dashed;
         break;
       }
     }
   });
-  return excalidrawProperty;
+  return plaitElementProperty;
 };
 
 /**
  * Compute style for label
  */
-export const computeExcalidrawVertexLabelStyle = (
+export const computeDrawnixTextStyle = (
   style: Vertex["labelStyle"]
-): Partial<Mutable<ExcalidrawTextElement>> => {
-  const excalidrawProperty: Partial<Mutable<ExcalidrawTextElement>> = {};
+): Partial<Mutable<CustomText>> => {
+  const textProperty: Partial<Mutable<CustomText>> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case LABEL_STYLE_PROPERTY.COLOR: {
-        excalidrawProperty.strokeColor = style[property];
+        textProperty.color = style[property];
         break;
       }
     }
   });
-  return excalidrawProperty;
+  return textProperty;
 };
 
-export const getRectangleByVertex = (vertex: Vertex) => {
+export const getRectangleByMermaidElement = (vertex: Vertex | SubGraph) => {
   return vertex as RectangleClient;
-}
+};

@@ -1,22 +1,27 @@
 import { GraphConverter } from "../GraphConverter.js";
-import { ExcalidrawElementSkeleton } from "@excalidraw/excalidraw/types/data/transform.js";
-
 import {
   getText,
-  computeExcalidrawVertexStyle,
-  computeExcalidrawVertexLabelStyle,
-  computeExcalidrawArrowType,
-  getRectangleByVertex,
+  computeDrawnixTextStyle,
+  computeDrawnixArrowType,
+  getRectangleByMermaidElement,
+  computeDrawnixVertexStyle,
+  computeDrawnixArrowStyle,
 } from "../helpers.js";
 import { VERTEX_TYPE } from "../../interfaces.js";
 import { Flowchart } from "../../parser/flowchart.js";
 import {
   createGeometryElement,
-  GeometryShapes,
   BasicShapes,
+  createArrowLineElement,
+  ArrowLineShape,
+  DefaultLineStyle,
+  ArrowLineText,
+  getTextShapeProperty,
+  FlowchartSymbols,
 } from "@plait/draw";
-import { PlaitElement, RectangleClient } from "@plait/core";
-import { buildText } from "@plait/common";
+import { PlaitElement, Point, RectangleClient } from "@plait/core";
+import { buildText, DEFAULT_FONT_FAMILY, measureElement } from "@plait/common";
+import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 const computeGroupIds = (
   graph: Flowchart
@@ -84,30 +89,33 @@ const computeGroupIds = (
 };
 
 export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
-  converter: (graph: Flowchart, options) => {
+  converter: (graph: Flowchart) => {
     const elements: PlaitElement[] = [];
-    const fontSize = options.fontSize;
-    // const { getGroupIds, getParentId } = computeGroupIds(graph);
-    console.log(graph);
+    const { getGroupIds, getParentId } = computeGroupIds(graph);
     // SubGraphs
     graph.subGraphs.reverse().forEach((subGraph) => {
-      // const groupIds = getGroupIds(subGraph.id);
-
-      // const containerElement: ExcalidrawElementSkeleton = {
-      //   id: subGraph.id,
-      //   type: "rectangle",
-      //   x: subGraph.x,
-      //   y: subGraph.y,
-      //   width: subGraph.width,
-      //   height: subGraph.height,
-      //   label: {
-      //     text: getText(subGraph),
-      //     fontSize,
-      //     verticalAlign: "top",
-      //   },
-      // };
-
-      // elements.push(containerElement);
+      const groupIds = getGroupIds(subGraph.id);
+      const text = buildText(getText(subGraph), undefined);
+      const textSize = getTextShapeProperty({} as any, text);
+      const points = RectangleClient.getPoints(
+        RectangleClient.getRectangleByCenterPoint(
+          [
+            subGraph.x + subGraph.width / 2,
+            subGraph.y + 4 + textSize.height / 2,
+          ],
+          textSize.width,
+          textSize.height
+        )
+      );
+      const textElement = createGeometryElement(BasicShapes.text, points, text);
+      let containerElement = createGeometryElement(
+        BasicShapes.rectangle,
+        RectangleClient.getPoints(getRectangleByMermaidElement(subGraph)),
+        "",
+        { fill: "#ffffde", strokeColor: "#aaaa33", strokeWidth: 1 }
+      );
+      elements.push(containerElement);
+      elements.push(textElement);
     });
 
     // Vertices
@@ -116,55 +124,66 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
         return;
       }
       // const groupIds = getGroupIds(vertex.id);
-
       // Compute custom style
-      const containerStyle = computeExcalidrawVertexStyle(
-        vertex.containerStyle
+      const elementStyle = computeDrawnixVertexStyle(vertex.containerStyle);
+      const textStyle = computeDrawnixTextStyle(vertex.labelStyle);
+
+      const verticesText = buildText(getText(vertex), undefined, textStyle);
+
+      const textSize = measureElement(verticesText, {
+        fontFamily: DEFAULT_FONT_FAMILY,
+        fontSize: DEFAULT_FONT_SIZE,
+      });
+
+      const styleOptions = {
+        fill: "#ECECFF",
+        strokeColor: "#9370DB",
+        strokeWidth: 1,
+        ...elementStyle,
+      };
+
+      let geometryElement = createGeometryElement(
+        BasicShapes.rectangle,
+        RectangleClient.getPoints(getRectangleByMermaidElement(vertex)),
+        buildText(getText(vertex), undefined, textStyle),
+        {
+          ...styleOptions,
+        },
+        {
+          textHeight: textSize.height,
+        }
       );
-      const labelStyle = computeExcalidrawVertexLabelStyle(vertex.labelStyle);
-
-      ;
-
-      let geometryElement = createGeometryElement(BasicShapes.rectangle, RectangleClient.getPoints(getRectangleByVertex(vertex)), buildText(getText(vertex)));
-
-      // let containerElement: ExcalidrawElementSkeleton = {
-      //   id: vertex.id,
-      //   type: "rectangle",
-      //   // groupIds,
-      //   x: vertex.x,
-      //   y: vertex.y,
-      //   width: vertex.width,
-      //   height: vertex.height,
-      //   strokeWidth: 2,
-      //   label: {
-      //     // groupIds,
-      //     text: getText(vertex),
-      //     fontSize,
-      //     ...labelStyle,
-      //   },
-      //   link: vertex.link || null,
-      //   ...containerStyle,
-      // };
-
       switch (vertex.type) {
-        // case VERTEX_TYPE.STADIUM: {
-        //   containerElement = { ...containerElement, roundness: { type: 3 } };
-        //   break;
-        // }
-        // case VERTEX_TYPE.ROUND: {
-        //   containerElement = { ...containerElement, roundness: { type: 3 } };
-        //   break;
-        // }
+        case VERTEX_TYPE.ROUND: {
+          geometryElement.shape = BasicShapes.roundRectangle;
+          break;
+        }
+        case VERTEX_TYPE.STADIUM: {
+          geometryElement.shape = FlowchartSymbols.terminal;
+          break;
+        }
         case VERTEX_TYPE.DOUBLECIRCLE: {
           const CIRCLE_MARGIN = 5;
           // Create new groupId for double circle
           // groupIds.push(`doublecircle_${vertex.id}}`);
           // Create inner circle element
-          const innerRectangle = RectangleClient.inflate(getRectangleByVertex(vertex), CIRCLE_MARGIN)
-          const innerCircle = createGeometryElement(BasicShapes.rectangle, RectangleClient.getPoints(innerRectangle), buildText(getText(vertex)));
+          const innerRectangle = RectangleClient.inflate(
+            getRectangleByMermaidElement(vertex),
+            -CIRCLE_MARGIN * 2
+          );
+          const innerCircle = createGeometryElement(
+            BasicShapes.ellipse,
+            RectangleClient.getPoints(innerRectangle),
+            buildText(getText(vertex)),
+            {
+              ...styleOptions,
+            }
+          );
           geometryElement = { ...geometryElement, shape: BasicShapes.ellipse };
+          geometryElement.text = buildText("");
+          elements.push(geometryElement);
           elements.push(innerCircle);
-          break;
+          return;
         }
         case VERTEX_TYPE.CIRCLE: {
           geometryElement.shape = BasicShapes.ellipse;
@@ -187,55 +206,46 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       // if (startParentId && startParentId === endParentId) {
       //   groupIds = getGroupIds(startParentId);
       // }
-
+      console.log(edge);
       // Get arrow position data
       const { startX, startY, reflectionPoints } = edge;
-
-      // Calculate Excalidraw arrow's points
-      const points = reflectionPoints.map((point) => [
-        point.x - reflectionPoints[0].x,
-        point.y - reflectionPoints[0].y,
-      ]);
-
-      // Get supported arrow type
-      const arrowType = computeExcalidrawArrowType(edge.type);
-
-      const arrowId = `${edge.start}_${edge.end}`;
-      const containerElement: ExcalidrawElementSkeleton = {
-        id: arrowId,
-        type: "arrow",
-        groupIds,
-        x: startX,
-        y: startY,
-        // 4 and 2 are the Excalidraw's stroke width of thick and thin respectively
-        // TODO: use constant exported from Excalidraw package
-        strokeWidth: edge.stroke === "thick" ? 4 : 2,
-        strokeStyle: edge.stroke === "dotted" ? "dashed" : undefined,
-        points,
-        ...(edge.text
-          ? { label: { text: getText(edge), fontSize, groupIds } }
-          : {}),
-        roundness: {
-          type: 2,
-        },
-        ...arrowType,
-      };
-
-      // Bind start and end vertex to arrow
-      const startVertex = elements.find((e) => e.id === edge.start);
-      const endVertex = elements.find((e) => e.id === edge.end);
-      if (!startVertex || !endVertex) {
-        return;
+      // Calculate arrow's points
+      const arrowType = computeDrawnixArrowType(edge.type);
+      const points = reflectionPoints.map(
+        (point) => [point.x, point.y] as Point
+      ) as [Point, Point];
+      const texts: ArrowLineText[] = [];
+      if (edge.text) {
+        const textValue = buildText(getText(edge));
+        const { width, height } = measureElement(textValue, {
+          fontSize: DEFAULT_FONT_SIZE,
+          fontFamily: DEFAULT_FONT_FAMILY,
+        });
+        texts.push({
+          position: 0.5,
+          text: buildText(getText(edge)),
+          width,
+          height,
+        });
       }
-
-      containerElement.start = {
-        id: startVertex.id || "",
+      const arrowStyle = computeDrawnixArrowStyle(edge);
+      const arrowOptions = {
+        strokeWidth: DefaultLineStyle.strokeWidth,
+        ...arrowStyle,
       };
-      containerElement.end = {
-        id: endVertex.id || "",
-      };
-
-      // elements.push(containerElement);
+      const arrowLineElement = createArrowLineElement(
+        ArrowLineShape.straight,
+        [...points],
+        {
+          ...arrowType.source,
+        },
+        {
+          ...arrowType.target,
+        },
+        texts,
+        { ...arrowOptions }
+      );
+      elements.push(arrowLineElement);
     });
 
     return {
