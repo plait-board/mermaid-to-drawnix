@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./index.tsx";
 import mermaid from "mermaid";
-import { DEFAULT_FONT_SIZE, MERMAID_CONFIG } from "../src/constants.ts";
+import { MERMAID_CONFIG } from "../src/constants.ts";
+import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 // Initialize Mermaid
 mermaid.initialize({

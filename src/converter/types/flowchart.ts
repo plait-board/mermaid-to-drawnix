@@ -21,7 +21,7 @@ import {
 } from "@plait/draw";
 import { PlaitElement, Point, RectangleClient } from "@plait/core";
 import { buildText, DEFAULT_FONT_FAMILY, measureElement } from "@plait/common";
-import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
+import { DrawnixConfig } from "../../index.js";
 
 const computeGroupIds = (
   graph: Flowchart
@@ -89,7 +89,7 @@ const computeGroupIds = (
 };
 
 export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
-  converter: (graph: Flowchart) => {
+  converter: (graph: Flowchart, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
     const { getGroupIds, getParentId } = computeGroupIds(graph);
     // SubGraphs
@@ -132,7 +132,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
 
       const textSize = measureElement(verticesText, {
         fontFamily: DEFAULT_FONT_FAMILY,
-        fontSize: DEFAULT_FONT_SIZE,
+        fontSize: config.fontSize,
       });
 
       const styleOptions = {
@@ -206,7 +206,6 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       // if (startParentId && startParentId === endParentId) {
       //   groupIds = getGroupIds(startParentId);
       // }
-      console.log(edge);
       // Get arrow position data
       const { startX, startY, reflectionPoints } = edge;
       // Calculate arrow's points
@@ -218,7 +217,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       if (edge.text) {
         const textValue = buildText(getText(edge));
         const { width, height } = measureElement(textValue, {
-          fontSize: DEFAULT_FONT_SIZE,
+          fontSize: config.fontSize,
           fontFamily: DEFAULT_FONT_FAMILY,
         });
         texts.push({

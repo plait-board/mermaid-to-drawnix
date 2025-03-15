@@ -1,4 +1,4 @@
-export const DEFAULT_FONT_SIZE = 20;
+import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 export const SVG_TO_SHAPE_MAPPER: { [key: string]: "rectangle" | "ellipse" } = {
   rect: "rectangle",
@@ -10,8 +10,7 @@ export const MERMAID_CONFIG = {
   startOnLoad: false,
   flowchart: { curve: "linear" },
   themeVariables: {
-    // Multiplying by 1.25 to increase the font size by 25% and render correctly in Excalidraw
-    fontSize: `${DEFAULT_FONT_SIZE * 1.25}px`,
+    fontSize: `${DEFAULT_FONT_SIZE}px`,
   },
   maxEdges: 500,
   maxTextSize: 50000,

@@ -1,5 +1,5 @@
+import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 import { DrawnixConfig } from "../index.js";
-import { DEFAULT_FONT_SIZE } from "../constants.js";
 import { MermaidToDrawnixResult } from "../interfaces.js";
 import { Flowchart } from "../parser/flowchart.js";
 import { Sequence } from "../parser/sequence.js";

@@ -35,7 +35,7 @@ export interface MermaidConfig {
 }
 
 export interface DrawnixConfig {
-  fontSize?: number;
+  fontSize: number;
 }
 
 const parseMermaidToDrawnix = async (

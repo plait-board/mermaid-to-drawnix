@@ -1,7 +1,7 @@
 import { ExcalidrawTextElement } from "@excalidraw/excalidraw/types/element/types.js";
 import { entityCodesToText } from "./utils.js";
 import { ValidLinearElement } from "@excalidraw/excalidraw/types/data/transform.js";
-import { DEFAULT_FONT_SIZE } from "./constants.js";
+import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
   type: "arrow";

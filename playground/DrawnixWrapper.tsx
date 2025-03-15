@@ -1,14 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Excalidraw,
-  convertToExcalidrawElements,
-} from "@excalidraw/excalidraw";
 import { Drawnix } from "@drawnix/drawnix";
-import { BoardChangeData } from "@drawnix/react-board";
 import { PlaitBoard, PlaitElement, PlaitTheme, Viewport } from "@plait/core";
-import type { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types/types.js";
 import { graphToDrawnix } from "../src/graphToDrawnix";
-import { DEFAULT_FONT_SIZE } from "../src/constants";
 import type { MermaidData } from "./";
 
 import "./../node_modules/@drawnix/drawnix/style.css";
@@ -35,9 +28,7 @@ const DrawnixWrapper = ({
       return;
     }
 
-    const { elements: newElements, files } = graphToDrawnix(mermaidOutput, {
-      fontSize: DEFAULT_FONT_SIZE,
-    });
+    const { elements: newElements, files } = graphToDrawnix(mermaidOutput);
 
     setElements(newElements);
     console.log(newElements);
