@@ -958,20 +958,37 @@
   resolved "https://registry.npmjs.org/@braintree/sanitize-url/-/sanitize-url-6.0.2.tgz"
   integrity sha512-Tbsj02wXCbqGmzdnXNk0SOF19ChhRU70BsroIi4Pm6Ehp56in6vch94mfbdQ17DozxkL3BAVjbZ4Qc1a0HFRAg==
 
-"@drawnix/drawnix@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@drawnix/drawnix/-/drawnix-0.0.3.tgz#e6d3aa08d09ca1cbfc2bc17208347f058c26d13c"
-  integrity sha512-kvTZF7/dZ3qlCDoYGjoj0OPdzosVmuEkTBwkgPUwZ6dHYx4nYCUSSA8Kw4vZSNMUARiRxdurP1LH/X77IqAsXg==
+"@drawnix/drawnix@0.0.4-0":
+  version "0.0.4-0"
+  resolved "https://registry.yarnpkg.com/@drawnix/drawnix/-/drawnix-0.0.4-0.tgz#65e8d6382e1b61db35ea47a241a4a593cb8a2367"
+  integrity sha512-2qdg0N7DhE+4OsG+wgCTz1jf8HDYmY/ixLmb/QNlWeqWpV0zgQ3NguQVHQIXPQ1uyYwPaAevPsySjNt34hHj3w==
+  dependencies:
+    "@floating-ui/react" "^0.26.24"
+    mobile-detect "^1.4.5"
+    open-color "^1.9.1"
 
-"@drawnix/react-board@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@drawnix/react-board/-/react-board-0.0.3.tgz#69b87b60d8c11ffd50f43c241e6fb5bcf9687348"
-  integrity sha512-bstC0CN51yPQu4rLbo5dIWfh3QSz7IozQMxLKTyQPGBPtCZRjb3R0qtJoqSIuycPEB5oeo/JaTqOeRgqpWuYig==
+"@drawnix/react-board@0.0.4-0":
+  version "0.0.4-0"
+  resolved "https://registry.yarnpkg.com/@drawnix/react-board/-/react-board-0.0.4-0.tgz#9b5c570a07acf76cadc9a65c4c0094290fc7e4db"
+  integrity sha512-gq9b4ektuxHjMDCawlNEdPamgnPbAct93402+EpCUDOWm+brnp3ltKNsXvNLnw29hQd24gzaKG0BwqUYND7/kA==
+  dependencies:
+    "@plait/common" "^0.77.2"
+    "@plait/core" "^0.77.2"
+    "@plait/draw" "^0.77.2"
+    "@plait/layouts" "^0.77.2"
+    "@plait/mind" "^0.77.2"
+    "@plait/text-plugins" "^0.77.2"
+    ahooks "^3.8.0"
+    classnames "^2.5.1"
 
-"@drawnix/react-text@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@drawnix/react-text/-/react-text-0.0.3.tgz#36bf592e6145950b0ca09d2dc11900f87d9c929c"
-  integrity sha512-dUL606T2xizeRV5HMHzZpSPTzRqXAcBHK2+DrXKu2Gmou0NPgz/AxrlMAiLUBDX7+qZ4WJBImF+5NBoLq5RXUA==
+"@drawnix/react-text@0.0.4-0":
+  version "0.0.4-0"
+  resolved "https://registry.yarnpkg.com/@drawnix/react-text/-/react-text-0.0.4-0.tgz#f70ce743f97a8ea8f3172447d9039b3feae595ab"
+  integrity sha512-KeTAoY0neRIOz31crEvPaO1G3mLaHszdoh3SkpJQqJ6YCjWzMYKDxxbUK69KQRLxqQG3+r2mBIcZC5JhffFyqw==
+  dependencies:
+    slate "^0.101.5"
+    slate-history "^0.100.0"
+    slate-react "^0.105.0"
 
 "@esbuild/aix-ppc64@0.20.2":
   version "0.20.2"

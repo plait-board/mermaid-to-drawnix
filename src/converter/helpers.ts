@@ -76,7 +76,7 @@ export const getText = (element: Vertex | Edge | SubGraph): string => {
   }
 
   if (text.includes("<br>")) {
-    text = text.replaceAll("<br>", "\n");
+    text = text.replace("<br>", "\n");
   }
 
   text = text.replace("<sub>", "");
