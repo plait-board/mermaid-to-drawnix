@@ -21,17 +21,14 @@ const DrawnixWrapper = ({
   const [elements, setElements] = useState<PlaitElement[]>([]);
 
   useEffect(() => {
-    console.log(mermaidOutput, mermaidDefinition);
-
     if (mermaidDefinition === "" || mermaidOutput === null) {
       setElements([]);
       return;
     }
 
-    const { elements: newElements, files } = graphToDrawnix(mermaidOutput);
+    const { elements: newElements } = graphToDrawnix(mermaidOutput);
 
     setElements(newElements);
-    console.log(newElements);
   }, [mermaidDefinition, mermaidOutput]);
 
   return (

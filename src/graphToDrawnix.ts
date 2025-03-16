@@ -6,6 +6,7 @@ import { Flowchart } from "./parser/flowchart.js";
 import { Class } from "./parser/class.js";
 import { sequenceToDrawnixConvertor } from "./converter/types/sequence.js";
 import { classToDrawnixConvertor } from "./converter/types/class.js";
+import { graphImageConverter } from "./converter/types/graphImage.js";
 
 export const graphToDrawnix = (
   graph: Flowchart | GraphImage | Sequence | Class,
@@ -13,6 +14,7 @@ export const graphToDrawnix = (
 ): MermaidToDrawnixResult => {
   switch (graph.type) {
     case "graphImage": {
+      return graphImageConverter.convert(graph, options);
     }
 
     case "flowchart": {

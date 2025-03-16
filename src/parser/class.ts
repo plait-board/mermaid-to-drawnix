@@ -3,11 +3,12 @@ import { nanoid } from "nanoid";
 import { computeEdgePositions, getTransformAttr } from "../utils.js";
 import {
   Arrow,
+  Arrowhead,
   Container,
   Line,
   Node,
   Text,
-  createArrowSkeletion,
+  createArrowSkeleton,
   createContainerSkeletonFromSVG,
   createLineSkeletonFromSVG,
   createTextSkeleton,
@@ -20,7 +21,7 @@ import type {
   ClassRelation,
   NamespaceNode,
 } from "mermaid/dist/diagrams/class/classTypes.js";
-import type { ExcalidrawLinearElement } from "@excalidraw/excalidraw/types/element/types.js";
+import { StrokeStyle } from "@plait/common";
 
 // Taken from mermaidParser.relationType
 const RELATION_TYPE = {
@@ -53,27 +54,26 @@ export interface Class {
 }
 
 const getStrokeStyle = (type: number) => {
-  let lineType: ExcalidrawLinearElement["strokeStyle"];
+  let lineType: StrokeStyle;
   switch (type) {
     case LINE_TYPE.LINE:
-      lineType = "solid";
+      lineType = StrokeStyle.solid;
       break;
     case LINE_TYPE.DOTTED_LINE:
-      lineType = "dotted";
+      lineType = StrokeStyle.dotted;
       break;
     default:
-      lineType = "solid";
+      lineType = StrokeStyle.solid;
   }
   return lineType;
 };
 
 const getArrowhead = (type: RELATION_TYPE_VALUES) => {
-  let arrowhead: ExcalidrawLinearElement["startArrowhead"];
+  let arrowhead: Arrowhead;
   switch (type) {
     case RELATION_TYPE.AGGREGATION:
       arrowhead = "diamond_outline";
       break;
-
     case RELATION_TYPE.COMPOSITION:
       arrowhead = "diamond";
       break;
@@ -83,7 +83,6 @@ const getArrowhead = (type: RELATION_TYPE_VALUES) => {
     case "none":
       arrowhead = null;
       break;
-
     case RELATION_TYPE.DEPENDENCY:
     default:
       arrowhead = "arrow";
@@ -253,7 +252,7 @@ const parseRelations = (
     const edgePositionData = computeEdgePositions(
       edges[index] as SVGPathElement
     );
-    const arrowSkeletion = createArrowSkeletion(
+    const arrowSkeleton = createArrowSkeleton(
       edgePositionData.startX,
       edgePositionData.startY,
       edgePositionData.endX,
@@ -268,7 +267,7 @@ const parseRelations = (
       }
     );
 
-    const arrow = adjustArrowPosition(direction, arrowSkeletion);
+    const arrow = adjustArrowPosition(direction, arrowSkeleton);
     arrows.push(arrow);
 
     // Add cardianlities and Multiplicities
@@ -399,7 +398,7 @@ const parseNotes = (
       const startY = container.y + (container.height || 0);
       const endX = startX;
       const endY = classNode.y;
-      const connector = createArrowSkeletion(startX, startY, endX, endY, {
+      const connector = createArrowSkeleton(startX, startY, endX, endY, {
         strokeStyle: "dotted",
         startArrowhead: null,
         endArrowhead: null,

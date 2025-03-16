@@ -1,31 +1,22 @@
 import {
-  Arrowhead,
-  ExcalidrawTextElement,
-} from "@excalidraw/excalidraw/types/element/types.js";
-import {
   CONTAINER_STYLE_PROPERTY,
   LABEL_STYLE_PROPERTY,
   SubGraph,
   Vertex,
 } from "../interfaces.js";
-import { ExcalidrawVertexElement } from "../types.js";
-import { Mutable } from "@excalidraw/excalidraw/types/utility-types.js";
-import { removeMarkdown } from "@excalidraw/markdown-to-text";
 import { Edge } from "../parser/flowchart.js";
 import { RectangleClient } from "@plait/core";
-import { ArrowLineHandle, ArrowLineMarkerType, PlaitArrowLine, PlaitCommonGeometry } from "@plait/draw";
+import {
+  ArrowLineHandle,
+  ArrowLineMarkerType,
+  PlaitArrowLine,
+  PlaitCommonGeometry,
+} from "@plait/draw";
 import { CustomText, StrokeStyle } from "@plait/common";
 import { Container, Text } from "../elementSkeleton.js";
 
 /**
- * Compute groupIds for each element
- */
-export interface ArrowType {
-  startArrowhead?: Arrowhead | null;
-  endArrowhead?: Arrowhead | null;
-}
-/**
- * Convert mermaid edge type to Excalidraw arrow type
+ * Convert mermaid edge type to Drawnix arrow type
  */
 const MERMAID_EDGE_TYPE_MAPPER: {
   [key: string]: { source: ArrowLineHandle; target: ArrowLineHandle };
@@ -66,12 +57,11 @@ export const computeDrawnixArrowType = (
   return MERMAID_EDGE_TYPE_MAPPER[mermaidArrowType];
 };
 
-
 export const computeDrawnixArrowStyle = (
   edge: Edge
-): Partial<Mutable<PlaitArrowLine>> => {
-  const arrowStyle: Partial<Mutable<PlaitArrowLine>> = {};
-  if (edge.stroke === 'dotted') {
+): Partial<PlaitArrowLine> => {
+  const arrowStyle: Partial<PlaitArrowLine> = {};
+  if (edge.stroke === "dotted") {
     arrowStyle.strokeStyle = StrokeStyle.dotted;
   }
   return arrowStyle;
@@ -81,15 +71,16 @@ export const computeDrawnixArrowStyle = (
 export const getText = (element: Vertex | Edge | SubGraph): string => {
   let text = element.text;
   if (element.labelType === "markdown") {
-    text = removeMarkdown(element.text);
+    // TODO: MD
+    text = element.text;
   }
 
-  if (text.includes('<br>')) {
-    text = text.replaceAll('<br>', '\n')
+  if (text.includes("<br>")) {
+    text = text.replaceAll("<br>", "\n");
   }
 
-  text = text.replace('<sub>', '');
-  text = text.replace('</sub>', '');
+  text = text.replace("<sub>", "");
+  text = text.replace("</sub>", "");
 
   return removeFontAwesomeIcons(text);
 };
@@ -107,8 +98,8 @@ const removeFontAwesomeIcons = (input: string): string => {
  */
 export const computeDrawnixVertexStyle = (
   style: Vertex["containerStyle"]
-): Partial<Mutable<PlaitCommonGeometry>> => {
-  const plaitElementProperty: Partial<Mutable<PlaitCommonGeometry>> = {};
+): Partial<PlaitCommonGeometry> => {
+  const plaitElementProperty: Partial<PlaitCommonGeometry> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case CONTAINER_STYLE_PROPERTY.FILL: {
@@ -139,8 +130,8 @@ export const computeDrawnixVertexStyle = (
  */
 export const computeDrawnixTextStyle = (
   style: Vertex["labelStyle"]
-): Partial<Mutable<CustomText>> => {
-  const textProperty: Partial<Mutable<CustomText>> = {};
+): Partial<CustomText> => {
+  const textProperty: Partial<CustomText> = {};
   Object.keys(style).forEach((property) => {
     switch (property) {
       case LABEL_STYLE_PROPERTY.COLOR: {
@@ -152,7 +143,9 @@ export const computeDrawnixTextStyle = (
   return textProperty;
 };
 
-export const getRectangleByMermaidElement = (vertex: Vertex | SubGraph | Container | Text) => {
+export const getRectangleByMermaidElement = (
+  vertex: Vertex | SubGraph | Container | Text
+) => {
   return vertex as RectangleClient;
 };
 

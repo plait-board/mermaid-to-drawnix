@@ -13,7 +13,7 @@ import {
 } from "../elementSkeleton.js";
 
 import type { Diagram } from "mermaid/dist/Diagram.js";
-import type { StrokeStyle } from "@excalidraw/excalidraw/types/element/types.js";
+import { StrokeStyle } from "@plait/common";
 
 type ARROW_KEYS = keyof typeof SEQUENCE_ARROW_TYPES;
 
@@ -102,16 +102,16 @@ const getStrokeStyle = (type: number) => {
     case MESSAGE_TYPE.SOLID_CROSS:
     case MESSAGE_TYPE.SOLID_OPEN:
     case MESSAGE_TYPE.SOLID_POINT:
-      strokeStyle = "solid";
+      strokeStyle = StrokeStyle.solid;
       break;
     case MESSAGE_TYPE.DOTTED:
     case MESSAGE_TYPE.DOTTED_CROSS:
     case MESSAGE_TYPE.DOTTED_OPEN:
     case MESSAGE_TYPE.DOTTED_POINT:
-      strokeStyle = "dotted";
+      strokeStyle = StrokeStyle.dotted;
       break;
     default:
-      strokeStyle = "solid";
+      strokeStyle = StrokeStyle.solid;
       break;
   }
   return strokeStyle;
@@ -395,7 +395,7 @@ const parseLoops = (messages: Message[], containerEl: Element) => {
     const endX = Number(node.getAttribute("x2"));
     const endY = Number(node.getAttribute("y2"));
     const line = createLineSkeletonFromSVG(node, startX, startY, endX, endY);
-    line.strokeStyle = "dotted";
+    line.strokeStyle = StrokeStyle.dotted;
     line.strokeColor = "#adb5bd";
     line.strokeWidth = 2;
     lines.push(line);

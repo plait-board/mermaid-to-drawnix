@@ -1,6 +1,14 @@
-import { ExcalidrawTextElement } from "@excalidraw/excalidraw/types/element/types.js";
+import { StrokeStyle } from "@plait/common";
 import { entityCodesToText } from "./utils.js";
-import { ValidLinearElement } from "@excalidraw/excalidraw/types/data/transform.js";
+import { DEFAULT_FONT_SIZE } from "./constants.js";
+
+export type VerticalAlign = string;
+
+export type Arrowhead = string | null;
+
+export type ArrowStart = {};
+
+export type ArrowEnd = {};
 
 export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
   type: "arrow";
@@ -8,14 +16,14 @@ export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
     text: string | null;
     fontSize?: number;
   };
-  strokeStyle?: ValidLinearElement["strokeStyle"] | null;
-  strokeWidth?: ValidLinearElement["strokeWidth"];
+  strokeStyle?: StrokeStyle | null | string;
+  strokeWidth?: number;
   points?: number[][];
   sequenceNumber?: Container;
-  startArrowhead?: ValidLinearElement["startArrowhead"];
-  endArrowhead?: ValidLinearElement["endArrowhead"];
-  start?: ValidLinearElement["start"];
-  end?: ValidLinearElement["end"];
+  startArrowhead?: Arrowhead;
+  endArrowhead?: Arrowhead;
+  start?: ArrowStart;
+  end?: ArrowEnd;
 };
 
 export type Line = {
@@ -27,7 +35,7 @@ export type Line = {
   id?: string;
   strokeColor?: string | null;
   strokeWidth?: number | null;
-  strokeStyle?: ValidLinearElement["strokeStyle"] | null;
+  strokeStyle?: StrokeStyle | null;
   groupId?: string;
   metadata?: { [key: string]: any };
 };
@@ -54,7 +62,7 @@ export type Container = {
     text: string | null;
     fontSize: number;
     color?: string;
-    verticalAlign?: ExcalidrawTextElement["verticalAlign"];
+    verticalAlign?: VerticalAlign;
   };
   width?: number;
   height?: number;
@@ -73,9 +81,9 @@ export const createArrowSkeletonFromSVG = (
   arrowNode: SVGLineElement | SVGPathElement,
   opts?: {
     label?: string;
-    strokeStyle?: ValidLinearElement["strokeStyle"];
-    startArrowhead?: ValidLinearElement["startArrowhead"];
-    endArrowhead?: ValidLinearElement["endArrowhead"];
+    strokeStyle?: StrokeStyle;
+    startArrowhead?: Arrowhead;
+    endArrowhead?: Arrowhead;
   }
 ) => {
   const arrow = {} as Arrow;
@@ -126,7 +134,7 @@ export const createArrowSkeletonFromSVG = (
     arrow.points = points;
   }
   if (opts?.label) {
-    // In mermaid the text is positioned above arrow but in Excalidraw
+    // In mermaid the text is positioned above arrow but in Drawnix
     // its postioned on the arrow hence the elements below it might look cluttered so shifting the arrow by an offset of 10px
     const offset = 10;
     arrow.startY = arrow.startY - offset;
@@ -142,7 +150,7 @@ export const createArrowSkeletonFromSVG = (
   return arrow;
 };
 
-export const createArrowSkeletion = (
+export const createArrowSkeleton = (
   startX: number,
   startY: number,
   endX: number,
@@ -152,8 +160,8 @@ export const createArrowSkeletion = (
     label?: Arrow["label"];
     strokeColor?: Arrow["strokeColor"];
     strokeStyle?: Arrow["strokeStyle"];
-    startArrowhead?: Arrow["startArrowhead"];
-    endArrowhead?: Arrow["endArrowhead"];
+    startArrowhead?: Arrowhead;
+    endArrowhead?: Arrowhead;
     start?: Arrow["start"];
     end?: Arrow["end"];
     points?: Arrow["points"];
@@ -168,6 +176,35 @@ export const createArrowSkeletion = (
 
   Object.assign(arrow, { ...opts });
   return arrow;
+};
+
+export const createTextSkeleton = (
+  x: number,
+  y: number,
+  text: string,
+  opts?: {
+    id?: string;
+    width?: number;
+    height?: number;
+    fontSize?: number;
+    groupId?: string;
+    metadata?: { [key: string]: any };
+  }
+) => {
+  const textElement: Text = {
+    type: "text",
+    x,
+    y,
+    text,
+    width: opts?.width || 20,
+    height: opts?.height || 20,
+
+    fontSize: opts?.fontSize || DEFAULT_FONT_SIZE,
+    id: opts?.id,
+    groupId: opts?.groupId,
+    metadata: opts?.metadata,
+  };
+  return textElement;
 };
 
 export const createTextSkeletonFromSVG = (
@@ -203,7 +240,7 @@ export const createContainerSkeletonFromSVG = (
     id?: string;
     label?: {
       text: string;
-      verticalAlign?: ExcalidrawTextElement["verticalAlign"];
+      verticalAlign?: VerticalAlign;
     };
     subtype?: Container["subtype"];
     groupId?: string;
