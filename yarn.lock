@@ -1120,21 +1120,6 @@
   resolved "https://registry.npmjs.org/@eslint/js/-/js-8.42.0.tgz"
   integrity sha512-6SWlXpWU5AvId8Ac7zjzmIOqMOba/JWY8XZ4A7q7Gn1Vlfg/SFFIlrtHXt9nPn4op9ZPAkl91Jao+QQv3r/ukw==
 
-"@excalidraw/eslint-config@1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@excalidraw/eslint-config/-/eslint-config-1.0.3.tgz#2122ef7413ae77874ae9848ce0f1c6b3f0d8bbbd"
-  integrity sha512-GemHNF5Z6ga0BWBSX7GJaNBUchLu6RwTcAB84eX1MeckRNhNasAsPCdelDlFalz27iS4RuYEQh0bPE8SRxJgbQ==
-
-"@excalidraw/excalidraw@0.17.1-7381-cdf6d3e":
-  version "0.17.1-7381-cdf6d3e"
-  resolved "https://registry.yarnpkg.com/@excalidraw/excalidraw/-/excalidraw-0.17.1-7381-cdf6d3e.tgz#ab01bc27639a7828edf5ebaba288969713477177"
-  integrity sha512-gRjaw9HQ5qzlhqvtnUK1ujakZnp5l4zgLmnskxG3WzmVXwEd+lK8etDEdXjAKmw7cmG+3e0jO0wFHKNqBxoKNA==
-
-"@excalidraw/markdown-to-text@0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@excalidraw/markdown-to-text/-/markdown-to-text-0.1.2.tgz#1703705e7da608cf478f17bfe96fb295f55a23eb"
-  integrity sha512-1nDXBNAojfi3oSFwJswKREkFm5wrSjqay81QlyRv2pkITG/XYB5v+oChENVBQLcxQwX4IUATWvXM5BcaNhPiIg==
-
 "@floating-ui/core@^1.6.0":
   version "1.6.9"
   resolved "https://registry.yarnpkg.com/@floating-ui/core/-/core-1.6.9.tgz#64d1da251433019dafa091de9b2886ff35ec14e6"

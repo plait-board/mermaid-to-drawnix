@@ -19,7 +19,6 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
-    "@excalidraw/markdown-to-text": "0.1.2",
     "mermaid": "10.9.0",
     "nanoid": "4.0.2"
   },
@@ -44,8 +43,6 @@
     "@drawnix/react-board": "0.0.3",
     "@drawnix/react-text": "0.0.3",
     "@babel/core": "7.12.0",
-    "@excalidraw/eslint-config": "1.0.3",
-    "@excalidraw/excalidraw": "0.17.1-7381-cdf6d3e",
     "@types/mermaid": "9.2.0",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.4",

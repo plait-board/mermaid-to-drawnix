@@ -21,7 +21,6 @@ export default defineConfig({
         "./testcases/**/*",
         "../src/parser/**/*",
         "../src/graphToDrawnix.ts",
-        "./initExcalidraw.ts",
       ],
     },
   },
