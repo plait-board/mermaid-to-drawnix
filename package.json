@@ -19,8 +19,7 @@
     "test:watch": "vitest --watch"
   },
   "dependencies": {
-    "mermaid": "10.9.0",
-    "nanoid": "4.0.2"
+    "mermaid": "10.9.0"
   },
   "devDependencies": {
     "@floating-ui/react": "^0.26.24",

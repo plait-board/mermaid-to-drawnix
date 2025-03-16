@@ -1,5 +1,3 @@
-import { nanoid } from "nanoid";
-
 import { computeEdgePositions, getTransformAttr } from "../utils.js";
 import {
   Arrow,
@@ -22,6 +20,7 @@ import type {
   NamespaceNode,
 } from "mermaid/dist/diagrams/class/classTypes.js";
 import { StrokeStyle } from "@plait/common";
+import { idCreator } from "@plait/core";
 
 // Taken from mermaidParser.relationType
 const RELATION_TYPE = {
@@ -101,7 +100,7 @@ const parseClasses = (
 
   Object.values(classes).forEach((classNode) => {
     const { domId, id: classId } = classNode;
-    const groupId = nanoid();
+    const groupId = idCreator();
     const domNode = containerEl.querySelector(`[data-id=${classId}]`);
     if (!domNode) {
       throw Error(`DOM Node with id ${domId} not found`);
@@ -135,7 +134,7 @@ const parseClasses = (
         endY,
         {
           groupId,
-          id: nanoid(),
+          id: idCreator(),
         }
       );
       line.startX += transformX;
@@ -158,7 +157,7 @@ const parseClasses = (
         return;
       }
 
-      const id = nanoid();
+      const id = idCreator();
       const { transformX: textTransformX, transformY: textTransformY } =
         getTransformAttr(node);
       const boundingBox = (node as SVGForeignObjectElement).getBBox();

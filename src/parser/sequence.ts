@@ -1,5 +1,4 @@
 import { SVG_TO_SHAPE_MAPPER } from "../constants.js";
-import { nanoid } from "nanoid";
 import {
   Arrow,
   Container,
@@ -14,6 +13,7 @@ import {
 
 import type { Diagram } from "mermaid/dist/Diagram.js";
 import { StrokeStyle } from "@plait/common";
+import { idCreator } from "@plait/core";
 
 type ARROW_KEYS = keyof typeof SEQUENCE_ARROW_TYPES;
 
@@ -153,7 +153,7 @@ const createActorSymbol = (
   if (!rootNode) {
     throw "root node not found";
   }
-  const groupId = nanoid();
+  const groupId = idCreator();
   const children = Array.from(rootNode.children);
   const nodeElements: Node[] = [];
   children.forEach((child, index) => {
