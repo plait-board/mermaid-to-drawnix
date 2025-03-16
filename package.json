@@ -22,10 +22,9 @@
     "mermaid": "10.9.0"
   },
   "devDependencies": {
-    "@drawnix/drawnix": "0.0.4-0",
-    "@drawnix/react-board": "0.0.4-0",
-    "@drawnix/react-text": "0.0.4-0",
-    "points-on-curve": "^1.0.0",
+    "@drawnix/drawnix": "0.0.4-1",
+    "@drawnix/react-board": "0.0.4-1",
+    "@drawnix/react-text": "0.0.4-1",
     "rxjs": "~7.8.0",
     "@babel/core": "7.12.0",
     "@types/mermaid": "9.2.0",
