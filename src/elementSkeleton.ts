@@ -1,7 +1,6 @@
 import { ExcalidrawTextElement } from "@excalidraw/excalidraw/types/element/types.js";
 import { entityCodesToText } from "./utils.js";
 import { ValidLinearElement } from "@excalidraw/excalidraw/types/data/transform.js";
-import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
   type: "arrow";
@@ -169,35 +168,6 @@ export const createArrowSkeletion = (
 
   Object.assign(arrow, { ...opts });
   return arrow;
-};
-
-export const createTextSkeleton = (
-  x: number,
-  y: number,
-  text: string,
-  opts?: {
-    id?: string;
-    width?: number;
-    height?: number;
-    fontSize?: number;
-    groupId?: string;
-    metadata?: { [key: string]: any };
-  }
-) => {
-  const textElement: Text = {
-    type: "text",
-    x,
-    y,
-    text,
-    width: opts?.width || 20,
-    height: opts?.height || 20,
-
-    fontSize: opts?.fontSize || DEFAULT_FONT_SIZE,
-    id: opts?.id,
-    groupId: opts?.groupId,
-    metadata: opts?.metadata,
-  };
-  return textElement;
 };
 
 export const createTextSkeletonFromSVG = (

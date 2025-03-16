@@ -1,34 +1,31 @@
 import { DrawnixConfig } from "./index.js";
-import { FlowchartToDrawnixSkeletonConverter } from "./converter/types/flowchart.js";
+import { flowchartToDrawnixConverter } from "./converter/types/flowchart.js";
 import { GraphImage, MermaidToDrawnixResult } from "./interfaces.js";
 import { Sequence } from "./parser/sequence.js";
 import { Flowchart } from "./parser/flowchart.js";
 import { Class } from "./parser/class.js";
-import { DEFAULT_FONT_SIZE } from "@plait/text-plugins";
-import { SequenceToDrawnixSkeletonConvertor } from "./converter/types/sequence.js";
+import { sequenceToDrawnixConvertor } from "./converter/types/sequence.js";
+import { classToDrawnixConvertor } from "./converter/types/class.js";
 
 export const graphToDrawnix = (
   graph: Flowchart | GraphImage | Sequence | Class,
-  options: DrawnixConfig = { fontSize: DEFAULT_FONT_SIZE }
+  options: DrawnixConfig = { fontSize: 20 }
 ): MermaidToDrawnixResult => {
   switch (graph.type) {
     case "graphImage": {
     }
 
     case "flowchart": {
-      return FlowchartToDrawnixSkeletonConverter.convert(
-        graph as Flowchart,
-        options
-      );
+      return flowchartToDrawnixConverter.convert(graph as Flowchart, options);
     }
 
     case "sequence": {
-      return SequenceToDrawnixSkeletonConvertor.convert(graph, options);
+      return sequenceToDrawnixConvertor.convert(graph, options);
     }
 
-    // case "class": {
-    //   return classToDrawnixSkeletonConvertor.convert(graph, options);
-    // }
+    case "class": {
+      return classToDrawnixConvertor.convert(graph, options);
+    }
 
     default: {
       throw new Error(

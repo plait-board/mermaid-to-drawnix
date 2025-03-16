@@ -4,9 +4,10 @@ import { PlaitElement, RectangleClient } from "@plait/core";
 import { DrawnixConfig } from "../../index.js";
 import {
   transformToDrawnixArrowElement,
-  transformToDrawnixContainerElement,
+  transformToDrawnixRectangleElement,
   transformToDrawnixLineElement,
   transformToDrawnixTextElement,
+  transformToDrawnixGroupElement,
 } from "../transformToDrawnixElement.js";
 import {
   BasicShapes,
@@ -18,7 +19,7 @@ import {
 import { Element, Node } from "slate";
 import { buildText } from "@plait/common";
 
-export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
+export const sequenceToDrawnixConvertor = new GraphConverter({
   converter: (chart: Sequence, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
     const activations: PlaitElement[] = [];
@@ -35,7 +36,7 @@ export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
             break;
           case "rectangle":
           case "ellipse":
-            plaitElement = transformToDrawnixContainerElement(element, config);
+            plaitElement = transformToDrawnixRectangleElement(element, config);
             break;
           case "text":
             plaitElement = transformToDrawnixTextElement(element, config);
@@ -69,7 +70,7 @@ export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
       elements.push(transformToDrawnixArrowElement(arrow, config));
       if (arrow.sequenceNumber) {
         elements.push(
-          transformToDrawnixContainerElement(arrow.sequenceNumber, config)
+          transformToDrawnixRectangleElement(arrow.sequenceNumber, config)
         );
       }
     });
@@ -85,7 +86,7 @@ export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
         elements.push(transformToDrawnixTextElement(text, config));
       });
       nodes.forEach((node) => {
-        elements.push(transformToDrawnixContainerElement(node, config));
+        elements.push(transformToDrawnixRectangleElement(node, config));
       });
     }
 
@@ -104,36 +105,12 @@ export const SequenceToDrawnixSkeletonConvertor = new GraphConverter({
           }
           return false;
         });
-        const rectangle = RectangleClient.getBoundingRectangle(
-          actors.map((actor) =>
-            RectangleClient.getRectangleByPoints(actor.points!)
-          )
-        );
-        const PADDING = 60;
-        const groupRectangle = RectangleClient.inflate(rectangle, PADDING);
-        const containerElement = createGeometryElement(
-          BasicShapes.rectangle,
-          [...RectangleClient.getPoints(groupRectangle)],
-          "",
-          { fill: group.fill, strokeWidth: 1 }
-        );
-        const text = buildText(name, undefined);
-        const textSize = getTextShapeProperty({} as any, text);
-        const points = RectangleClient.getPoints(
-          RectangleClient.getRectangleByCenterPoint(
-            [
-              groupRectangle.x + groupRectangle.width / 2,
-              groupRectangle.y + 4 + textSize.height / 2,
-            ],
-            textSize.width,
-            textSize.height
-          )
-        );
-        const textElement = createGeometryElement(
-          BasicShapes.text,
-          points,
-          text
-        );
+        const { textElement, containerElement } =
+          transformToDrawnixGroupElement(
+            actors as PlaitCommonGeometry[],
+            name,
+            { fill: group.fill }
+          );
         elements.unshift(textElement);
         elements.unshift(containerElement);
       });

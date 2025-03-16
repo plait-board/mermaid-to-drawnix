@@ -1,3 +1,4 @@
+import { DEFAULT_FONT_SIZE } from "./constants.js";
 import { graphToDrawnix } from "./graphToDrawnix.js";
 import { parseMermaid } from "./parseMermaid.js";
 

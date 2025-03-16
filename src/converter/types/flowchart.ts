@@ -22,6 +22,7 @@ import {
 import { PlaitElement, Point, RectangleClient } from "@plait/core";
 import { buildText, DEFAULT_FONT_FAMILY, measureElement } from "@plait/common";
 import { DrawnixConfig } from "../../index.js";
+import { DEFAULT_FONT_SIZE as PLAIT_DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 const computeGroupIds = (
   graph: Flowchart
@@ -88,7 +89,7 @@ const computeGroupIds = (
   };
 };
 
-export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
+export const flowchartToDrawnixConverter = new GraphConverter({
   converter: (graph: Flowchart, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
     const { getGroupIds, getParentId } = computeGroupIds(graph);
@@ -132,7 +133,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
 
       const textSize = measureElement(verticesText, {
         fontFamily: DEFAULT_FONT_FAMILY,
-        fontSize: config.fontSize,
+        fontSize: PLAIT_DEFAULT_FONT_SIZE,
       });
 
       const styleOptions = {
@@ -141,7 +142,6 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
         strokeWidth: 1,
         ...elementStyle,
       };
-
       let geometryElement = createGeometryElement(
         BasicShapes.rectangle,
         RectangleClient.getPoints(getRectangleByMermaidElement(vertex)),
@@ -217,7 +217,7 @@ export const FlowchartToDrawnixSkeletonConverter = new GraphConverter({
       if (edge.text) {
         const textValue = buildText(getText(edge));
         const { width, height } = measureElement(textValue, {
-          fontSize: config.fontSize,
+          fontSize: PLAIT_DEFAULT_FONT_SIZE,
           fontFamily: DEFAULT_FONT_FAMILY,
         });
         texts.push({

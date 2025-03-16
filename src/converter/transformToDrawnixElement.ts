@@ -13,12 +13,16 @@ import {
   BasicShapes,
   createArrowLineElement,
   createGeometryElement,
+  GeometryStyleOptions,
+  getTextShapeProperty,
   PlaitArrowLine,
   PlaitCommonGeometry,
   ShapeDefaultSpace,
 } from "@plait/draw";
 import { DrawnixConfig } from "../index.js";
 import { Point, RectangleClient } from "@plait/core";
+import { Node as SlateNode } from "slate";
+import { DEFAULT_FONT_SIZE as PLAIT_DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 export const transformToDrawnixLineElement = (
   element: Line,
@@ -53,7 +57,7 @@ export const transformToDrawnixLineElement = (
 
 export const transformToDrawnixArrowElement = (
   element: Arrow,
-  config: DrawnixConfig
+  config: DrawnixConfig & { arrowLineShape?: ArrowLineShape }
 ) => {
   let points = [
     [element.startX, element.startY],
@@ -78,12 +82,21 @@ export const transformToDrawnixArrowElement = (
     normalizeText(element?.label?.text || ""),
     undefined
   );
-  const textSize = measureElement(arrowText, {
-    fontFamily: DEFAULT_FONT_FAMILY,
-    fontSize: config.fontSize,
-  });
+  const texts = [];
+  if (SlateNode.string(arrowText).trim().length > 0) {
+    const textSize = measureElement(arrowText, {
+      fontFamily: DEFAULT_FONT_FAMILY,
+      fontSize: PLAIT_DEFAULT_FONT_SIZE,
+    });
+    texts.push({
+      position: 0.5,
+      text: arrowText,
+      width: textSize.width,
+      height: textSize.height,
+    });
+  }
   const arrow = createArrowLineElement(
-    ArrowLineShape.curve,
+    config.arrowLineShape || ArrowLineShape.curve,
     [...points],
     {
       marker: element.startArrowhead
@@ -95,20 +108,13 @@ export const transformToDrawnixArrowElement = (
         ? ArrowLineMarkerType.arrow
         : ArrowLineMarkerType.none,
     },
-    [
-      {
-        position: 0.5,
-        text: arrowText,
-        width: textSize.width,
-        height: textSize.height,
-      },
-    ],
+    texts,
     { ...arrowOptions }
   );
   return arrow;
 };
 
-export const transformToDrawnixContainerElement = (
+export const transformToDrawnixRectangleElement = (
   element: Exclude<Node, Line | Arrow | Text>,
   config: DrawnixConfig
 ) => {
@@ -138,7 +144,7 @@ export const transformToDrawnixContainerElement = (
   );
   const textSize = measureElement(verticesText, {
     fontFamily: DEFAULT_FONT_FAMILY,
-    fontSize: config.fontSize,
+    fontSize: PLAIT_DEFAULT_FONT_SIZE,
   });
   const rectangle = getRectangleByMermaidElement({
     ...element,
@@ -168,17 +174,15 @@ export const transformToDrawnixTextElement = (
   config: DrawnixConfig
 ) => {
   const text = buildText(normalizeText(element.text || ""), undefined);
-  const textSize = measureElement(text, {
-    fontFamily: DEFAULT_FONT_FAMILY,
-    fontSize: config.fontSize,
-  });
-  const rectangle = getRectangleByMermaidElement({
-    ...element,
-    width: element.width! + ShapeDefaultSpace.rectangleAndText * 2,
-  });
+  const textSize = getTextShapeProperty({} as any, text);
+  const textRectangle = RectangleClient.getRectangleByCenterPoint(
+    [element.x + textSize.width / 2, element.y],
+    textSize.width,
+    textSize.height
+  );
   const textElement = createGeometryElement(
     BasicShapes.text,
-    RectangleClient.getPoints(rectangle),
+    RectangleClient.getPoints(textRectangle),
     text,
     {},
     {
@@ -186,4 +190,42 @@ export const transformToDrawnixTextElement = (
     }
   );
   return textElement;
+};
+
+export const transformToDrawnixGroupElement = (
+  childrenElements: PlaitCommonGeometry[],
+  text: string,
+  options: Partial<GeometryStyleOptions> = {}
+) => {
+  const childrenRectangle = RectangleClient.getBoundingRectangle(
+    childrenElements.map((ele) =>
+      RectangleClient.getRectangleByPoints(ele.points!)
+    )
+  );
+  const PADDING = 60;
+  const groupRectangle = RectangleClient.inflate(childrenRectangle, PADDING);
+  const containerElement = createGeometryElement(
+    BasicShapes.rectangle,
+    [...RectangleClient.getPoints(groupRectangle)],
+    "",
+    { strokeWidth: 1, ...options }
+  );
+  const slateTextElement = buildText(text, undefined);
+  const textSize = getTextShapeProperty({} as any, text);
+  const points = RectangleClient.getPoints(
+    RectangleClient.getRectangleByCenterPoint(
+      [
+        groupRectangle.x + groupRectangle.width / 2,
+        groupRectangle.y + 4 + textSize.height / 2,
+      ],
+      textSize.width,
+      textSize.height
+    )
+  );
+  const textElement = createGeometryElement(
+    BasicShapes.text,
+    points,
+    slateTextElement
+  );
+  return { textElement, containerElement };
 };
