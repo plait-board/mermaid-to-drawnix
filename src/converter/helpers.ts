@@ -14,6 +14,7 @@ import {
 } from "@plait/draw";
 import { CustomText, StrokeStyle } from "@plait/common";
 import { Container, Text } from "../elementSkeleton.js";
+import { removeMarkdown } from "../markdown-to-text.js";
 
 /**
  * Convert mermaid edge type to Drawnix arrow type
@@ -71,8 +72,7 @@ export const computeDrawnixArrowStyle = (
 export const getText = (element: Vertex | Edge | SubGraph): string => {
   let text = element.text;
   if (element.labelType === "markdown") {
-    // TODO: MD
-    text = element.text;
+    text = removeMarkdown(element.text);
   }
 
   if (text.includes("<br>")) {
