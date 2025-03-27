@@ -74,9 +74,15 @@ export const getText = (element: Vertex | Edge | SubGraph): string => {
   if (element.labelType === "markdown") {
     text = removeMarkdown(element.text);
   }
+  
+  console.log("getText: ", text);
 
   if (text.includes("<br>")) {
     text = text.replace("<br>", "\n");
+  }
+
+  if (text.includes("\\n")) {
+    text = text.replace("\\n", "\n");
   }
 
   text = text.replace("<sub>", "");
