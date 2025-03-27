@@ -1,5 +1,5 @@
 {
-  "name": "@drawnix/mermaid-to-drawnix",
+  "name": "@plait-board/mermaid-to-drawnix",
   "version": "0.0.2",
   "description": "Mermaid to Drawnix Diagrams",
   "main": "dist/index.js",
