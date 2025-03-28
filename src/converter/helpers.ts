@@ -74,19 +74,16 @@ export const getText = (element: Vertex | Edge | SubGraph): string => {
   if (element.labelType === "markdown") {
     text = removeMarkdown(element.text);
   }
-  
-  console.log("getText: ", text);
 
-  if (text.includes("<br>")) {
-    text = text.replace("<br>", "\n");
-  }
+  // 处理换行符
+  text = text.replace(/<br\/?>/g, '\n');
+  text = text.replace(/\\n/g, '\n');
 
-  if (text.includes("\\n")) {
-    text = text.replace("\\n", "\n");
-  }
-
-  text = text.replace("<sub>", "");
-  text = text.replace("</sub>", "");
+  // 移除 Mermaid 支持的格式标签
+  const tagsToRemove = ['sub', 'small'];
+  tagsToRemove.forEach(tag => {
+    text = text.replace(new RegExp(`<${tag}>|</${tag}>`, 'g'), '');
+  });
 
   return removeFontAwesomeIcons(text);
 };
