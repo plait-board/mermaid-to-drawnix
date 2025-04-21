@@ -6,6 +6,7 @@ import {
   getRectangleByMermaidElement,
   computeDrawnixVertexStyle,
   computeDrawnixArrowStyle,
+  getHitConnectionFromConnectionPoint,
 } from "../helpers.js";
 import { VERTEX_TYPE } from "../../interfaces.js";
 import { Flowchart } from "../../parser/flowchart.js";
@@ -18,8 +19,10 @@ import {
   ArrowLineText,
   getTextShapeProperty,
   FlowchartSymbols,
+  ArrowLineHandle,
+  PlaitShapeElement,
 } from "@plait/draw";
-import { PlaitElement, Point, RectangleClient } from "@plait/core";
+import { createGroup, PlaitElement, Point, RectangleClient } from "@plait/core";
 import { buildText, DEFAULT_FONT_FAMILY, measureElement } from "@plait/common";
 import { DrawnixConfig } from "../../index.js";
 import { DEFAULT_FONT_SIZE as PLAIT_DEFAULT_FONT_SIZE } from "@plait/text-plugins";
@@ -92,10 +95,22 @@ const computeGroupIds = (
 export const flowchartToDrawnixConverter = new GraphConverter({
   converter: (graph: Flowchart, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
+    const mermaidIdToElementMap: Record<string, PlaitElement> = {};
+    const mermaidGroupIdToElementMap: Record<string, PlaitElement> = {};
     const { getGroupIds, getParentId } = computeGroupIds(graph);
     // SubGraphs
     graph.subGraphs.reverse().forEach((subGraph) => {
       const groupIds = getGroupIds(subGraph.id);
+      groupIds.forEach((groupId, index) => {
+        if (!mermaidGroupIdToElementMap[groupId]) {
+          const groupElement = createGroup();
+          mermaidGroupIdToElementMap[groupId] = groupElement;
+        }
+        if (index > 0 && mermaidGroupIdToElementMap[groupId]) {
+          const childGroup = mermaidGroupIdToElementMap[groupIds[index - 1]];
+          childGroup.groupId = mermaidGroupIdToElementMap[groupId].id;
+        }
+      });
       const text = buildText(getText(subGraph), undefined);
       const textSize = getTextShapeProperty({} as any, text);
       const points = RectangleClient.getPoints(
@@ -115,8 +130,20 @@ export const flowchartToDrawnixConverter = new GraphConverter({
         "",
         { fill: "#ffffde", strokeColor: "#aaaa33", strokeWidth: 1 }
       );
+      containerElement.groupId = mermaidGroupIdToElementMap[groupIds[0]].id;
       elements.push(containerElement);
+      mermaidIdToElementMap[subGraph.id] = containerElement;
+      textElement.groupId = mermaidGroupIdToElementMap[groupIds[0]].id;
       elements.push(textElement);
+      groupIds.forEach((groupId) => {
+        const existing =
+          elements.findIndex((searchElement: PlaitElement) => {
+            return searchElement.id === mermaidGroupIdToElementMap[groupId]?.id;
+          }) >= 0;
+        if (!existing) {
+          elements.push(mermaidGroupIdToElementMap[groupId]);
+        }
+      });
     });
 
     // Vertices
@@ -124,7 +151,7 @@ export const flowchartToDrawnixConverter = new GraphConverter({
       if (!vertex) {
         return;
       }
-      // const groupIds = getGroupIds(vertex.id);
+      const groupIds = getGroupIds(vertex.id);
       // Compute custom style
       const elementStyle = computeDrawnixVertexStyle(vertex.containerStyle);
       const textStyle = computeDrawnixTextStyle(vertex.labelStyle);
@@ -153,6 +180,7 @@ export const flowchartToDrawnixConverter = new GraphConverter({
           textHeight: textSize.height,
         }
       );
+
       switch (vertex.type) {
         case VERTEX_TYPE.ROUND: {
           geometryElement.shape = BasicShapes.roundRectangle;
@@ -164,9 +192,6 @@ export const flowchartToDrawnixConverter = new GraphConverter({
         }
         case VERTEX_TYPE.DOUBLECIRCLE: {
           const CIRCLE_MARGIN = 5;
-          // Create new groupId for double circle
-          // groupIds.push(`doublecircle_${vertex.id}}`);
-          // Create inner circle element
           const innerRectangle = RectangleClient.inflate(
             getRectangleByMermaidElement(vertex),
             -CIRCLE_MARGIN * 2
@@ -183,6 +208,12 @@ export const flowchartToDrawnixConverter = new GraphConverter({
           geometryElement.text = buildText("");
           elements.push(geometryElement);
           elements.push(innerCircle);
+          mermaidIdToElementMap[vertex.id] = geometryElement;
+          const groupElement =
+            groupIds[0] && mermaidGroupIdToElementMap[groupIds[0]];
+          if (groupElement) {
+            geometryElement.groupId = groupElement.id;
+          }
           return;
         }
         case VERTEX_TYPE.CIRCLE: {
@@ -196,16 +227,22 @@ export const flowchartToDrawnixConverter = new GraphConverter({
       }
 
       elements.push(geometryElement);
+      mermaidIdToElementMap[vertex.id] = geometryElement;
+      const groupElement =
+        groupIds[0] && mermaidGroupIdToElementMap[groupIds[0]];
+      if (groupElement) {
+        geometryElement.groupId = groupElement.id;
+      }
     });
 
     // Edges
     graph.edges.forEach((edge) => {
       let groupIds: string[] = [];
-      // const startParentId = getParentId(edge.start);
-      // const endParentId = getParentId(edge.end);
-      // if (startParentId && startParentId === endParentId) {
-      //   groupIds = getGroupIds(startParentId);
-      // }
+      const startParentId = getParentId(edge.start);
+      const endParentId = getParentId(edge.end);
+      if (startParentId && startParentId === endParentId) {
+        groupIds = getGroupIds(startParentId);
+      }
       // Get arrow position data
       const { startX, startY, reflectionPoints } = edge;
       // Calculate arrow's points
@@ -213,6 +250,28 @@ export const flowchartToDrawnixConverter = new GraphConverter({
       const points = reflectionPoints.map(
         (point) => [point.x, point.y] as Point
       ) as [Point, Point];
+      const sourceHandle: ArrowLineHandle = {
+        marker: arrowType.source.marker,
+      };
+      const targetHandle: ArrowLineHandle = {
+        marker: arrowType.target.marker,
+      };
+      const sourceElement = mermaidIdToElementMap[edge.start];
+      if (sourceElement) {
+        sourceHandle.boundId = sourceElement.id;
+        sourceHandle.connection = getHitConnectionFromConnectionPoint(
+          points[0],
+          sourceElement as PlaitShapeElement
+        );
+      }
+      const targetElement = mermaidIdToElementMap[edge.end];
+      if (targetElement) {
+        targetHandle.boundId = targetElement.id;
+        targetHandle.connection = getHitConnectionFromConnectionPoint(
+          points[points.length - 1],
+          targetElement as PlaitShapeElement
+        );
+      }
       const texts: ArrowLineText[] = [];
       if (edge.text) {
         const textValue = buildText(getText(edge));
@@ -236,15 +295,20 @@ export const flowchartToDrawnixConverter = new GraphConverter({
         ArrowLineShape.straight,
         [...points],
         {
-          ...arrowType.source,
+          ...sourceHandle,
         },
         {
-          ...arrowType.target,
+          ...targetHandle,
         },
         texts,
         { ...arrowOptions }
       );
       elements.push(arrowLineElement);
+      const groupElement =
+        groupIds[0] && mermaidGroupIdToElementMap[groupIds[0]];
+      if (groupElement) {
+        arrowLineElement.groupId = groupElement.id;
+      }
     });
 
     return {

@@ -5,12 +5,13 @@ import {
   Vertex,
 } from "../interfaces.js";
 import { Edge } from "../parser/flowchart.js";
-import { RectangleClient } from "@plait/core";
+import { Point, RectangleClient } from "@plait/core";
 import {
   ArrowLineHandle,
   ArrowLineMarkerType,
   PlaitArrowLine,
   PlaitCommonGeometry,
+  PlaitShapeElement,
 } from "@plait/draw";
 import { CustomText, StrokeStyle } from "@plait/common";
 import { Container, Text } from "../elementSkeleton.js";
@@ -154,4 +155,9 @@ export const getRectangleByMermaidElement = (
 
 export const normalizeText = (text: string) => {
   return text.replace(/\\n/g, "\n");
+};
+
+export const getHitConnectionFromConnectionPoint = (connectionPoint: Point, hitElement: PlaitShapeElement): Point => {
+  let rectangle = RectangleClient.getRectangleByPoints(hitElement.points);
+  return [(connectionPoint[0] - rectangle.x) / rectangle.width, (connectionPoint[1] - rectangle.y) / rectangle.height];
 };
