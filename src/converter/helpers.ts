@@ -80,7 +80,7 @@ export const getText = (element: Vertex | Edge | SubGraph): string => {
   text = text.replace(/\\n/g, '\n');
 
   // 移除 Mermaid 支持的格式标签
-  const tagsToRemove = ['sub', 'small'];
+  const tagsToRemove = ['sub', 'small', 'i'];
   tagsToRemove.forEach(tag => {
     text = text.replace(new RegExp(`<${tag}>|</${tag}>`, 'g'), '');
   });
