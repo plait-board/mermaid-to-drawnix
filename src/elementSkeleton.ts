@@ -6,9 +6,9 @@ export type VerticalAlign = string;
 
 export type Arrowhead = string | null;
 
-export type ArrowStart = { id: string; type: string };
+export type ArrowStart = { id?: string; type: string };
 
-export type ArrowEnd = { id: string; type: string };
+export type ArrowEnd = { id?: string; type: string };
 
 export type Arrow = Omit<Line, "type" | "strokeStyle"> & {
   type: "arrow";
