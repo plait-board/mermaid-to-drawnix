@@ -20,12 +20,13 @@ import {
   ShapeDefaultSpace,
 } from "@plait/draw";
 import { DrawnixConfig } from "../index.js";
-import { Point, RectangleClient } from "@plait/core";
+import { createGroup, PlaitGroup, Point, RectangleClient } from "@plait/core";
 import { Node as SlateNode } from "slate";
 import { DEFAULT_FONT_SIZE as PLAIT_DEFAULT_FONT_SIZE } from "@plait/text-plugins";
 
 export const transformToDrawnixLineElement = (
   element: Line,
+  mermaidGroupIdToElementMap: Record<string, PlaitGroup>,
   config: DrawnixConfig
 ) => {
   const points = [
@@ -51,12 +52,20 @@ export const transformToDrawnixLineElement = (
     [],
     { ...arrowOptions }
   );
-
+  if (element.groupId) {
+    let groupElement = mermaidGroupIdToElementMap[element.groupId];
+    if (!groupElement) {
+      groupElement = createGroup();
+      mermaidGroupIdToElementMap[element.groupId] = groupElement;
+    }
+    line.groupId = groupElement.id;
+  }
   return line;
 };
 
 export const transformToDrawnixArrowElement = (
   element: Arrow,
+  mermaidGroupIdToElementMap: Record<string, PlaitGroup>,
   config: DrawnixConfig & { arrowLineShape?: ArrowLineShape }
 ) => {
   let points = [
@@ -111,11 +120,20 @@ export const transformToDrawnixArrowElement = (
     texts,
     { ...arrowOptions }
   );
+  if (element.groupId) {
+    let groupElement = mermaidGroupIdToElementMap[element.groupId];
+    if (!groupElement) {
+      groupElement = createGroup();
+      mermaidGroupIdToElementMap[element.groupId] = groupElement;
+    }
+    arrow.groupId = groupElement.id;
+  }
   return arrow;
 };
 
 export const transformToDrawnixRectangleElement = (
   element: Exclude<Node, Line | Arrow | Text>,
+  mermaidGroupIdToElementMap: Record<string, PlaitGroup>,
   config: DrawnixConfig
 ) => {
   let extraProps: Partial<PlaitCommonGeometry> = {};
@@ -165,12 +183,20 @@ export const transformToDrawnixRectangleElement = (
       textHeight: textSize.height,
     }
   );
-
+  if (element.groupId) {
+    let groupElement = mermaidGroupIdToElementMap[element.groupId];
+    if (!groupElement) {
+      groupElement = createGroup();
+      mermaidGroupIdToElementMap[element.groupId] = groupElement;
+    }
+    container.groupId = groupElement.id;
+  }
   return container;
 };
 
 export const transformToDrawnixTextElement = (
   element: Text,
+  mermaidGroupIdToElementMap: Record<string, PlaitGroup>,
   config: DrawnixConfig
 ) => {
   const text = buildText(normalizeText(element.text || ""), undefined);
@@ -189,6 +215,14 @@ export const transformToDrawnixTextElement = (
       textHeight: textSize.height,
     }
   );
+  if (element.groupId) {
+    let groupElement = mermaidGroupIdToElementMap[element.groupId];
+    if (!groupElement) {
+      groupElement = createGroup();
+      mermaidGroupIdToElementMap[element.groupId] = groupElement;
+    }
+    textElement.groupId = groupElement.id;
+  }
   return textElement;
 };
 
