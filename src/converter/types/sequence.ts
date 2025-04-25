@@ -1,6 +1,12 @@
 import { GraphConverter } from "../GraphConverter.js";
 import { Sequence } from "../../parser/sequence.js";
-import { PlaitElement, RectangleClient } from "@plait/core";
+import {
+  createGroup,
+  PlaitElement,
+  PlaitGroup,
+  PlaitGroupElement,
+  RectangleClient,
+} from "@plait/core";
 import { DrawnixConfig } from "../../index.js";
 import {
   transformToDrawnixArrowElement,
@@ -9,37 +15,41 @@ import {
   transformToDrawnixTextElement,
   transformToDrawnixGroupElement,
 } from "../transformToDrawnixElement.js";
-import {
-  BasicShapes,
-  createGeometryElement,
-  getTextShapeProperty,
-  PlaitCommonGeometry,
-  PlaitGeometry,
-} from "@plait/draw";
-import { Element, Node } from "slate";
-import { buildText } from "@plait/common";
+import { PlaitCommonGeometry, PlaitGeometry } from "@plait/draw";
 
 export const sequenceToDrawnixConvertor = new GraphConverter({
   converter: (chart: Sequence, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
     const activations: PlaitElement[] = [];
+    const mermaidGroupIdToElementMap: Record<string, PlaitGroup> = {};
     Object.values(chart.nodes).forEach((node) => {
       if (!node || !node.length) {
         return;
       }
       node.forEach((element) => {
         let plaitElement: PlaitElement;
-
         switch (element.type) {
           case "line":
-            plaitElement = transformToDrawnixLineElement(element, config);
+            plaitElement = transformToDrawnixLineElement(
+              element,
+              mermaidGroupIdToElementMap,
+              config
+            );
             break;
           case "rectangle":
           case "ellipse":
-            plaitElement = transformToDrawnixRectangleElement(element, config);
+            plaitElement = transformToDrawnixRectangleElement(
+              element,
+              mermaidGroupIdToElementMap,
+              config
+            );
             break;
           case "text":
-            plaitElement = transformToDrawnixTextElement(element, config);
+            plaitElement = transformToDrawnixTextElement(
+              element,
+              mermaidGroupIdToElementMap,
+              config
+            );
             break;
           default:
             throw `unknown type ${element.type}`;
@@ -54,23 +64,32 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
         }
       });
     });
-
     Object.values(chart.lines).forEach((line) => {
       if (!line) {
         return;
       }
-      elements.push(transformToDrawnixLineElement(line, config));
+      elements.push(
+        transformToDrawnixLineElement(line, mermaidGroupIdToElementMap, config)
+      );
     });
-
     Object.values(chart.arrows).forEach((arrow) => {
       if (!arrow) {
         return;
       }
-
-      elements.push(transformToDrawnixArrowElement(arrow, config));
+      elements.push(
+        transformToDrawnixArrowElement(
+          arrow,
+          mermaidGroupIdToElementMap,
+          config
+        )
+      );
       if (arrow.sequenceNumber) {
         elements.push(
-          transformToDrawnixRectangleElement(arrow.sequenceNumber, config)
+          transformToDrawnixRectangleElement(
+            arrow.sequenceNumber,
+            mermaidGroupIdToElementMap,
+            config
+          )
         );
       }
     });
@@ -80,13 +99,31 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
     if (chart.loops) {
       const { lines, texts, nodes } = chart.loops;
       lines.forEach((line) => {
-        elements.push(transformToDrawnixLineElement(line, config));
+        elements.push(
+          transformToDrawnixLineElement(
+            line,
+            mermaidGroupIdToElementMap,
+            config
+          )
+        );
       });
       texts.forEach((text) => {
-        elements.push(transformToDrawnixTextElement(text, config));
+        elements.push(
+          transformToDrawnixTextElement(
+            text,
+            mermaidGroupIdToElementMap,
+            config
+          )
+        );
       });
       nodes.forEach((node) => {
-        elements.push(transformToDrawnixRectangleElement(node, config));
+        elements.push(
+          transformToDrawnixRectangleElement(
+            node,
+            mermaidGroupIdToElementMap,
+            config
+          )
+        );
       });
     }
 
@@ -105,20 +142,46 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
           }
           return false;
         });
+
         const { textElement, containerElement } =
           transformToDrawnixGroupElement(
             actors as PlaitCommonGeometry[],
             name,
             { fill: group.fill }
           );
+
         elements.unshift(textElement);
         elements.unshift(containerElement);
+        const groupElement = createGroup();
+        containerElement.groupId = groupElement.id;
+        elements.forEach((ele) => {
+          if (PlaitGroupElement.isGroup(ele)) {
+            return;
+          }
+          const element = ele as PlaitGeometry;
+          const containerRectangle = RectangleClient.getRectangleByPoints(
+            containerElement.points
+          );
+          const isInContainer = element.points.every((point) => {
+            return RectangleClient.isPointInRectangle(
+              containerRectangle,
+              point
+            );
+          });
+          if (isInContainer) {
+            element.groupId = groupElement.id;
+          }
+        });
+        elements.push(groupElement);
       });
     }
     elements.forEach((ele) => {
       if (ele.origin) {
         delete ele.origin;
       }
+    });
+    Object.values(mermaidGroupIdToElementMap).forEach((groupElement) => {
+      elements.push(groupElement);
     });
     return { elements };
   },
