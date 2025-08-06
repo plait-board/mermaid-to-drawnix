@@ -93,7 +93,7 @@ export const transformToDrawnixArrowElement = (
   );
   const texts = [];
   if (SlateNode.string(arrowText).trim().length > 0) {
-    const textSize = measureElement(arrowText, {
+    const textSize = measureElement(null, arrowText, {
       fontFamily: DEFAULT_FONT_FAMILY,
       fontSize: PLAIT_DEFAULT_FONT_SIZE,
     });
@@ -160,7 +160,7 @@ export const transformToDrawnixRectangleElement = (
     undefined,
     textStyle
   );
-  const textSize = measureElement(verticesText, {
+  const textSize = measureElement(null, verticesText, {
     fontFamily: DEFAULT_FONT_FAMILY,
     fontSize: PLAIT_DEFAULT_FONT_SIZE,
   });

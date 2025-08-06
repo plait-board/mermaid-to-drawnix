@@ -158,7 +158,7 @@ export const flowchartToDrawnixConverter = new GraphConverter({
 
       const verticesText = buildText(getText(vertex), undefined, textStyle);
 
-      const textSize = measureElement(verticesText, {
+      const textSize = measureElement(null, verticesText, {
         fontFamily: DEFAULT_FONT_FAMILY,
         fontSize: PLAIT_DEFAULT_FONT_SIZE,
       });
@@ -275,7 +275,7 @@ export const flowchartToDrawnixConverter = new GraphConverter({
       const texts: ArrowLineText[] = [];
       if (edge.text) {
         const textValue = buildText(getText(edge));
-        const { width, height } = measureElement(textValue, {
+        const { width, height } = measureElement(null, textValue, {
           fontSize: PLAIT_DEFAULT_FONT_SIZE,
           fontFamily: DEFAULT_FONT_FAMILY,
         });
