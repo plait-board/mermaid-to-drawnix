@@ -21,6 +21,7 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
   converter: (chart: Sequence, config: DrawnixConfig) => {
     const elements: PlaitElement[] = [];
     const activations: PlaitElement[] = [];
+    const notes: PlaitElement[] = [];
     const mermaidGroupIdToElementMap: Record<string, PlaitGroup> = {};
     Object.values(chart.nodes).forEach((node) => {
       if (!node || !node.length) {
@@ -59,6 +60,11 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
         plaitElement.origin = element;
         if (element.type === "rectangle" && element?.subtype === "activation") {
           activations.push(plaitElement);
+        } else if (
+          element.type === "rectangle" &&
+          element?.subtype === "note"
+        ) {
+          notes.push(plaitElement);
         } else {
           elements.push(plaitElement);
         }
@@ -126,6 +132,7 @@ export const sequenceToDrawnixConvertor = new GraphConverter({
         );
       });
     }
+    elements.push(...notes);
 
     if (chart.groups) {
       chart.groups.forEach((group) => {
