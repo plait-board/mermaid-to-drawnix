@@ -8,6 +8,9 @@
     "dist/*"
   ],
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "rimraf -rf ./dist && cross-env tsc -b src",
     "test:code": "eslint --max-warnings=0 --ext .js,.ts,.tsx .",
@@ -16,7 +19,13 @@
     "preview": "yarn run build:playground && vite preview --outDir ./public",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "release": "yarn test:code && yarn test && yarn build && standard-version",
+    "release:patch": "yarn test:code && yarn test && yarn build && standard-version --release-as patch",
+    "release:minor": "yarn test:code && yarn test && yarn build && standard-version --release-as minor",
+    "release:major": "yarn test:code && yarn test && yarn build && standard-version --release-as major",
+    "publish:latest": "npm publish",
+    "prepublishOnly": "yarn build"
   },
   "dependencies": {
     "mermaid": "10.9.3"
@@ -44,6 +53,7 @@
     "rimraf": "5.0.5",
     "rxjs": "~7.8.0",
     "sass": "1.74.1",
+    "standard-version": "^9.5.0",
     "typescript": "5.2.2",
     "vite": "5.2.8",
     "vitest": "^1.6.0"
