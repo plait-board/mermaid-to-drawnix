@@ -7,19 +7,49 @@ Convert mermaid diagrams to drawnix
 Install packages:
 
 ```
-yarn
+npm install
 ```
 
 Start development playground:
 
 ```
-yarn start
+npm start
 ```
 
 Build command:
 
 ```
-yarn build
+npm run build
+```
+
+## Release
+
+Generate `CHANGELOG.md` without changing the package version or creating a
+commit/tag:
+
+```
+npm run changelog
+```
+
+Create a release commit and tag (the default version bump is determined from
+Conventional Commits):
+
+```
+npm run release
+```
+
+To select the version bump explicitly, use one of these commands:
+
+```
+npm run release:patch
+npm run release:minor
+npm run release:major
+```
+
+After reviewing and pushing the release commit and tag, publish the package:
+
+```
+npm run publish:latest
 ```
 
 ## Get started
@@ -94,4 +124,3 @@ Try out [here](https://mermaid-to-drawnix.pages.dev).
 ## Thanks 
 
 Inspired by [mermaid-to-excalidraw](https://github.com/excalidraw/mermaid-to-excalidraw)
-
